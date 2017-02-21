@@ -18,12 +18,12 @@ class SearchBanner(QMainWindow):
         self.initShowBar()
 
     def initTransform(self):
-        self.setGeometry(0, 0, 420, 70)
+        self.setGeometry(0, 0, 420, 60)
         self.center(self)
         self.moveByCenter(100,100)
 
     def initTitle(self):
-        self.setWindowTitle('NiubilitiyWord')
+        self.setWindowTitle('NiubilityWord')
         pass
 
     def initInputBar(self):
