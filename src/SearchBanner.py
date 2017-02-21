@@ -8,6 +8,8 @@ except ImportError:
     from PyQt4.QtCore import *
     from PyQt4.QtGui import *
 
+from interface.IBaiduDictionary import translate
+
 
 class SearchBanner(QMainWindow):
     def __init__(self):
@@ -20,7 +22,7 @@ class SearchBanner(QMainWindow):
     def initTransform(self):
         self.setGeometry(0, 0, 420, 60)
         self.center(self)
-        self.moveByCenter(100,100)
+        self.moveByCenter(100, 100)
 
     def initTitle(self):
         self.setWindowTitle('NiubilityWord')
@@ -42,10 +44,16 @@ class SearchBanner(QMainWindow):
     def moveByCenter(self, x, y):
         pass
 
+    def onSearch(self):
+        result = translate("ad", 'sd', 'sd')
+        self.displayResult(result)
+
+    def displayResult(self, result):
+        pass
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     mainBanner = SearchBanner()
     mainBanner.show()
-
     sys.exit(app.exec_())
