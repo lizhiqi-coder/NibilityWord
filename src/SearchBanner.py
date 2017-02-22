@@ -9,6 +9,7 @@ except ImportError:
     from PyQt4.QtGui import *
 
 from interface.IBaiduDictionary import translate
+from res.R import png
 
 
 class SearchBanner(QMainWindow):
@@ -26,6 +27,8 @@ class SearchBanner(QMainWindow):
 
     def initTitle(self):
         self.setWindowTitle('NiubilityWord')
+        self.setWindowIcon(QIcon(png.dict))
+
         pass
 
     def initInputBar(self):
