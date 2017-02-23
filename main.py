@@ -1,6 +1,6 @@
 # coding:utf-8
 
-from res import GenerateImageIndexing
+from res import RCreater
 from src.SearchBanner import SearchBanner
 
 import sys
@@ -12,8 +12,7 @@ except ImportError:
     from PyQt4.QtCore import *
     from PyQt4.QtGui import *
 
-GenerateImageIndexing.start()
-
+RCreater.start()
 
 def main():
     app = QApplication(sys.argv)

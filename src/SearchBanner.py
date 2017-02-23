@@ -12,7 +12,7 @@ from interface.IBaiduDictionary import translate
 from res import R
 
 
-class SearchBanner(QMainWindow):
+class SearchBanner(QWidget):
     def __init__(self):
         super(SearchBanner, self).__init__()
         self.initTransform()
@@ -32,8 +32,26 @@ class SearchBanner(QMainWindow):
         pass
 
     def initInputBar(self):
-        self.text_edit = QTextEdit()
-        self.setCentralWidget(self.text_edit)
+        self.text_edit = QLineEdit()
+        self.text_edit.setFixedHeight(35)
+        self.btn_search = QPushButton()
+        self.btn_search.setIcon(QIcon(R.png.search))
+
+        self.btn_clear = QPushButton()
+        self.btn_clear.setIcon(QIcon(R.png.clear))
+        self.btn_history = QComboBox()
+        self.btn_history.resize(20,20)
+
+        root_layout = QHBoxLayout()
+        input_layout = QHBoxLayout()
+        input_layout.addWidget(self.text_edit)
+        input_layout.addWidget(self.btn_clear)
+        input_layout.addWidget(self.btn_history)
+        root_layout.addLayout(input_layout)
+        # root_layout.addStretch(1)
+        root_layout.addWidget(self.btn_search)
+        self.setLayout(root_layout)
+
         pass
 
     def initShowBar(self):
