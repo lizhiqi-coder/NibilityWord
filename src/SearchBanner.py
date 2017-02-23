@@ -9,6 +9,8 @@ except ImportError:
     from PyQt4.QtGui import *
 
 from interface.IBaiduDictionary import translate
+from DetailPanel import DetailPanel
+from ListPanel import ListPanel
 from res import R
 
 
@@ -18,10 +20,12 @@ class SearchBanner(QWidget):
         self.__initTransform()
         self.__initTitle()
         self.__initInputBar()
-        self.__initShowBar()
+        self.__initDetailPanel()
+        self.__initListPanel()
 
     def __initTransform(self):
         self.setGeometry(0, 0, 420, 60)
+        self.setFixedWidth(420)
         self.__center(self)
         self.moveByCenter(100, 100)
 
@@ -40,21 +44,20 @@ class SearchBanner(QWidget):
         self.btn_clear = QPushButton()
         self.btn_clear.setIcon(QIcon(R.png.clear))
         self.btn_history = QComboBox()
-        self.btn_history.resize(20,20)
+        self.btn_history.resize(20, 20)
 
-        root_layout = QHBoxLayout()
+        bar_layout = QHBoxLayout()
         input_layout = QHBoxLayout()
         input_layout.addWidget(self.text_edit)
         input_layout.addWidget(self.btn_clear)
         input_layout.addWidget(self.btn_history)
-        root_layout.addLayout(input_layout)
-        # root_layout.addStretch(1)
-        root_layout.addWidget(self.btn_search)
-        self.setLayout(root_layout)
+        bar_layout.addLayout(input_layout)
+        bar_layout.addWidget(self.btn_search)
 
-        pass
+        self.root_layout = QVBoxLayout()
+        self.root_layout.addLayout(bar_layout)
+        self.setLayout(self.root_layout)
 
-    def __initShowBar(self):
         pass
 
     def __center(self, widget):
@@ -83,6 +86,18 @@ class SearchBanner(QWidget):
             event.accept()
         else:
             event.ignore()
+
+    def __initDetailPanel(self):
+        self.detail_panel = DetailPanel()
+        self.detail_panel.initTransfrom(self.width(), 200)
+        self.detail_panel.hide()
+        self.root_layout.addWidget(self.detail_panel)
+
+    def __initListPanel(self):
+        self.list_panel = ListPanel()
+        self.list_panel.initTransfrom(self.width()-30, 200)
+        # self.list_panel.hide()
+        self.root_layout.addWidget(self.list_panel)
 
 
 if __name__ == '__main__':
