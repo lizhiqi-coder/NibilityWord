@@ -31,14 +31,13 @@ class SearchBanner(QWidget):
         self.setWindowFlags(Qt.WindowCloseButtonHint)
 
     def __initTitle(self):
-        self.setWindowTitle('NiubilityWord')
+        self.setWindowTitle(u'牛霸词典')
         self.setWindowIcon(QIcon(R.png.dict))
-
-        pass
 
     def __initInputBar(self):
         self.text_edit = QLineEdit()
         self.text_edit.setFixedHeight(35)
+        self.text_edit.setFocus()
         self.btn_search = QPushButton()
         self.btn_search.setIcon(QIcon(R.png.search))
 
@@ -59,7 +58,11 @@ class SearchBanner(QWidget):
         self.root_layout.addLayout(bar_layout)
         self.setLayout(self.root_layout)
 
-        pass
+        # 绑定信号量
+        self.text_edit.textChanged.connect(self.__onInputChanged)
+        self.text_edit.returnPressed.connect(self.__onSearch)
+
+        self.btn_search.clicked.connect(self.__onSearch)
 
     def __center(self, widget):
         rect = widget.frameGeometry()
@@ -72,8 +75,19 @@ class SearchBanner(QWidget):
         pass
 
     def __onSearch(self):
-        result = translate("ad", 'sd', 'sd')
-        self.__displayResult(result)
+        print '__onSearch'
+        key_word = ''
+        try:
+            key_word = self.text_edit.text()
+            result = translate(key_word, 'en', 'cn')
+            self.list_panel.hide()
+            if result != None:
+                self.detail_panel.show()
+                self.__displayResult(result)
+            else:
+                self.detail_panel.hide()
+        except:
+            print 'onSearch except'
 
     def __displayResult(self, result):
         pass
@@ -96,8 +110,15 @@ class SearchBanner(QWidget):
     def __initListPanel(self):
         self.list_panel = ListPanel()
         self.list_panel.initTransfrom(self.width() - 30, 200)
-        # self.list_panel.hide()
+        self.list_panel.hide()
         self.root_layout.addWidget(self.list_panel)
+
+    def __onInputChanged(self):
+        self.detail_panel.hide()
+        if self.text_edit.text() != '':
+            self.list_panel.show()
+        else:
+            self.list_panel.hide()
 
 
 if __name__ == '__main__':
