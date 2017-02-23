@@ -59,7 +59,7 @@ class SearchBanner(QWidget):
 
     def __center(self, widget):
         rect = widget.frameGeometry()
-        self.center_point = QDesktopWidget().availableGeometry().__center()
+        self.center_point = QDesktopWidget().availableGeometry().center()
 
         rect.moveCenter(self.center_point)
         widget.move(rect.topLeft())
