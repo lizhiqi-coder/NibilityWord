@@ -2,7 +2,7 @@
 import os
 
 
-def searchImage():
+def __searchImage():
     current_dir = os.path.abspath('.')
     result = []
     for root, sub_dirs, files in os.walk(current_dir):
@@ -13,7 +13,7 @@ def searchImage():
     return result
 
 
-def buildIndexing(index_list, namespace):
+def __buildIndexing(index_list, namespace):
     R_file = open('./R.py', 'w')
     buf = '#coding:utf-8\r\n'
     buf += 'class ' + namespace + ' ():'
@@ -35,9 +35,9 @@ def buildIndexing(index_list, namespace):
 
 
 def start():
-    image_paths = searchImage()
+    image_paths = __searchImage()
     print image_paths
-    buildIndexing(index_list=image_paths, namespace='png')
+    __buildIndexing(index_list=image_paths, namespace='png')
 
 
 if __name__ == '__main__':

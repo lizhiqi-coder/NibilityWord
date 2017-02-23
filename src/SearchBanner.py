@@ -15,23 +15,23 @@ from res import R
 class SearchBanner(QWidget):
     def __init__(self):
         super(SearchBanner, self).__init__()
-        self.initTransform()
-        self.initTitle()
-        self.initInputBar()
-        self.initShowBar()
+        self.__initTransform()
+        self.__initTitle()
+        self.__initInputBar()
+        self.__initShowBar()
 
-    def initTransform(self):
+    def __initTransform(self):
         self.setGeometry(0, 0, 420, 60)
-        self.center(self)
+        self.__center(self)
         self.moveByCenter(100, 100)
 
-    def initTitle(self):
+    def __initTitle(self):
         self.setWindowTitle('NiubilityWord')
         self.setWindowIcon(QIcon(R.png.dict))
 
         pass
 
-    def initInputBar(self):
+    def __initInputBar(self):
         self.text_edit = QLineEdit()
         self.text_edit.setFixedHeight(35)
         self.btn_search = QPushButton()
@@ -54,12 +54,12 @@ class SearchBanner(QWidget):
 
         pass
 
-    def initShowBar(self):
+    def __initShowBar(self):
         pass
 
-    def center(self, widget):
+    def __center(self, widget):
         rect = widget.frameGeometry()
-        self.center_point = QDesktopWidget().availableGeometry().center()
+        self.center_point = QDesktopWidget().availableGeometry().__center()
 
         rect.moveCenter(self.center_point)
         widget.move(rect.topLeft())
@@ -68,11 +68,11 @@ class SearchBanner(QWidget):
 
         pass
 
-    def onSearch(self):
+    def __onSearch(self):
         result = translate("ad", 'sd', 'sd')
-        self.displayResult(result)
+        self.__displayResult(result)
 
-    def displayResult(self, result):
+    def __displayResult(self, result):
         pass
 
     def closeEvent(self, event):
