@@ -32,6 +32,8 @@ class SearchBanner(QMainWindow):
         pass
 
     def initInputBar(self):
+        self.text_edit = QTextEdit()
+        self.setCentralWidget(self.text_edit)
         pass
 
     def initShowBar(self):
@@ -45,6 +47,7 @@ class SearchBanner(QMainWindow):
         widget.move(rect.topLeft())
 
     def moveByCenter(self, x, y):
+
         pass
 
     def onSearch(self):
@@ -53,6 +56,15 @@ class SearchBanner(QMainWindow):
 
     def displayResult(self, result):
         pass
+
+    def closeEvent(self, event):
+        reply = QMessageBox.question(self, 'tip',
+                                     'are you sure to quit?',
+                                     QMessageBox.Yes, QMessageBox.No)
+        if reply == QMessageBox.Yes:
+            event.accept()
+        else:
+            event.ignore()
 
 
 if __name__ == '__main__':
