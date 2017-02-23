@@ -25,9 +25,10 @@ class SearchBanner(QWidget):
 
     def __initTransform(self):
         self.setGeometry(0, 0, 420, 60)
-        self.setFixedWidth(420)
+        self.setFixedWidth(self.width())
         self.__center(self)
         self.moveByCenter(100, 100)
+        self.setWindowFlags(Qt.WindowCloseButtonHint)
 
     def __initTitle(self):
         self.setWindowTitle('NiubilityWord')
@@ -68,7 +69,6 @@ class SearchBanner(QWidget):
         widget.move(rect.topLeft())
 
     def moveByCenter(self, x, y):
-
         pass
 
     def __onSearch(self):
@@ -78,14 +78,14 @@ class SearchBanner(QWidget):
     def __displayResult(self, result):
         pass
 
-    def closeEvent(self, event):
-        reply = QMessageBox.question(self, 'tip',
-                                     'are you sure to quit?',
-                                     QMessageBox.Yes, QMessageBox.No)
-        if reply == QMessageBox.Yes:
-            event.accept()
-        else:
-            event.ignore()
+    # def closeEvent(self, event):
+    #     reply = QMessageBox.question(self, 'tip',
+    #                                  'are you sure to quit?',
+    #                                  QMessageBox.Yes, QMessageBox.No)
+    #     if reply == QMessageBox.Yes:
+    #         event.accept()
+    #     else:
+    #         event.ignore()
 
     def __initDetailPanel(self):
         self.detail_panel = DetailPanel()
@@ -95,7 +95,7 @@ class SearchBanner(QWidget):
 
     def __initListPanel(self):
         self.list_panel = ListPanel()
-        self.list_panel.initTransfrom(self.width()-30, 200)
+        self.list_panel.initTransfrom(self.width() - 30, 200)
         # self.list_panel.hide()
         self.root_layout.addWidget(self.list_panel)
 
