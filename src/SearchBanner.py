@@ -10,7 +10,7 @@ except ImportError:
 
 from interface.IBaiduDictionary import translate
 from DetailPanel import DetailPanel
-from ListPanel import ListPanel
+from IndexListPanel import IndexListPanel
 from res import R
 
 
@@ -36,6 +36,7 @@ class SearchBanner(QWidget):
 
     def __initInputBar(self):
         self.text_edit = QLineEdit()
+        self.text_edit.setFont(QFont(R.string.Helvetica, R.dimen.text_size))
         self.text_edit.setFixedHeight(35)
         self.text_edit.setFocus()
         self.btn_search = QPushButton()
@@ -55,6 +56,7 @@ class SearchBanner(QWidget):
         bar_layout.addWidget(self.btn_search)
 
         self.root_layout = QVBoxLayout()
+        self.root_layout.setSizeConstraint(QLayout.SetFixedSize)
         self.root_layout.addLayout(bar_layout)
         self.setLayout(self.root_layout)
 
@@ -80,7 +82,7 @@ class SearchBanner(QWidget):
         try:
             key_word = self.text_edit.text()
             result = translate(key_word, 'en', 'cn')
-            self.list_panel.hide()
+            self.index_list_panel.hide()
             if result != None:
                 self.detail_panel.show()
                 self.__displayResult(result)
@@ -108,17 +110,17 @@ class SearchBanner(QWidget):
         self.root_layout.addWidget(self.detail_panel)
 
     def __initListPanel(self):
-        self.list_panel = ListPanel()
-        self.list_panel.initTransfrom(self.width() - 30, 200)
-        self.list_panel.hide()
-        self.root_layout.addWidget(self.list_panel)
+        self.index_list_panel = IndexListPanel()
+        self.index_list_panel.initTransfrom(self.width() - 30, 200)
+        self.index_list_panel.hide()
+        self.root_layout.addWidget(self.index_list_panel)
 
     def __onInputChanged(self):
         self.detail_panel.hide()
         if self.text_edit.text() != '':
-            self.list_panel.show()
+            self.index_list_panel.show()
         else:
-            self.list_panel.hide()
+            self.index_list_panel.hide()
 
 
 if __name__ == '__main__':

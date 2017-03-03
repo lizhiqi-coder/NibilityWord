@@ -8,9 +8,9 @@ except ImportError:
     from PyQt4.QtGui import *
 
 
-class ListPanel(QListWidget):
+class IndexListPanel(QListWidget):
     def __init__(self):
-        super(ListPanel, self).__init__()
+        super(IndexListPanel, self).__init__()
 
     def initTransfrom(self, w, h):
         self.setGeometry(0, 0, w, h)
