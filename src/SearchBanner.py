@@ -8,7 +8,7 @@ except ImportError:
     from PyQt4.QtCore import *
     from PyQt4.QtGui import *
 
-from interface.IBaiduDictionary import translate
+from interface import IPowerWord
 from DetailPanel import DetailPanel
 from IndexListPanel import IndexListPanel
 from res import R
@@ -81,7 +81,7 @@ class SearchBanner(QWidget):
         key_word = ''
         try:
             key_word = self.text_edit.text()
-            result = translate(key_word, 'en', 'cn')
+            result = IPowerWord.translate(key_word)
             self.index_list_panel.hide()
             if result != None:
                 self.detail_panel.show()

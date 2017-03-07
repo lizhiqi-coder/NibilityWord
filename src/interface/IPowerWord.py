@@ -1,8 +1,8 @@
 # coding:utf-8
 """金山词霸"""
-import httplib
+import httplib2
+import json
 
-# sys.path.append('..')
 from src.model.DetailModel import *
 
 myUrl = '/api/dictionary.php'
@@ -16,17 +16,47 @@ def translate(question, type='json'):
              + '&type=' + type \
              + '&key=' + secretKey
     try:
-        httpClient = httplib.HTTPConnection('dict-co.iciba.com')
-        httpClient.request('GET', myUrl)
-        response = httpClient.getresponse()
-        print response.read()
-        return DetailModel()
+        myUrl = 'http://' + 'dict-co.iciba.com' + myUrl
+        httpClient = httplib2.Http()
+        response, content = httpClient.request(myUrl)
+        print content
+
+        json_data = json.loads(content)
+
+        result = __parse_json(json_data=json_data)
+        return result
+
     except Exception, e:
         print e
     finally:
-        if httpClient:
-            httpClient.close()
+        pass
     return None
+
+
+def __parse_json(json_data):
+    _exchange = exchange(
+        json_data['exchange']['word_pl'],
+        json_data['exchange']['word_third'],
+        json_data['exchange']['word_past'],
+        json_data['exchange']['word_done'],
+        json_data['exchange']['word_ing'],
+        json_data['exchange']['word_er'],
+        json_data['exchange']['word_est']
+    )
+    _symbols = []
+    for js_symbol in json_data['symbols']:
+        _means = []
+        for item in js_symbol['parts']:
+            _means.append(item['means'])
+        _symbol = symbol(js_symbol['ph_en'],
+                         js_symbol['ph_en_mp3'],
+                         js_symbol['ph_am'],
+                         js_symbol['ph_am_mp3'],
+                         _means)
+        _symbols.append(_symbol)
+
+    _result = DetailModel(json_data['word_name'], _exchange, _symbols)
+    return _result
 
 
 if __name__ == '__main__':
