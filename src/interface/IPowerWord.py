@@ -5,18 +5,18 @@ import json
 
 from src.model.DetailModel import *
 
-myUrl = '/api/dictionary.php'
+gUrl = 'http://dict-co.iciba.com/api/dictionary.php'
 secretKey = 'C75843D78A50DD1378BADC7A8BD3995D'
 
 
 def translate(question, type='json'):
     httpClient = None
-    global myUrl
+    global gUrl
+    myUrl = gUrl
     myUrl += '?w=' + question \
              + '&type=' + type \
              + '&key=' + secretKey
     try:
-        myUrl = 'http://' + 'dict-co.iciba.com' + myUrl
         httpClient = httplib2.Http()
         response, content = httpClient.request(myUrl)
         print content
