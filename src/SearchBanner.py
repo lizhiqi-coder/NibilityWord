@@ -25,17 +25,24 @@ class SearchBanner(QWidget):
 
     def __initTransform(self):
         self.setGeometry(0, 0, 420, 60)
-        self.setWindowFlags(Qt.WindowStaysOnTopHint)
         self.setFixedWidth(self.width())
         self.__center(self)
         self.moveByCenter(100, 100)
-        self.setWindowFlags(Qt.WindowCloseButtonHint)
+        self.setWindowFlags(Qt.WindowCloseButtonHint | Qt.WindowStaysOnTopHint)
+        global_style_file = QFile(R.qss.global_style)
+        global_style_file.open(QFile.ReadOnly)
+
+        self.setStyleSheet(str(global_style_file.readAll()))
 
     def __initTitle(self):
         self.setWindowTitle(u'牛霸词典')
         self.setWindowIcon(QIcon(R.png.dict))
 
     def __initInputBar(self):
+        self.root_layout = QVBoxLayout()
+        self.root_layout.setSizeConstraint(QLayout.SetFixedSize)
+        self.setLayout(self.root_layout)
+
         self.text_edit = QLineEdit()
         self.text_edit.setFont(QFont(R.string.Helvetica, R.dimen.text_size))
         self.text_edit.setFixedHeight(35)
@@ -45,27 +52,35 @@ class SearchBanner(QWidget):
 
         self.btn_clear = QPushButton()
         self.btn_clear.setIcon(QIcon(R.png.clear))
-        self.btn_history = QComboBox()
-        self.btn_history.resize(20, 20)
+        self.btn_clear.hide()
+        self.btn_history = QPushButton()
+        self.btn_history.setIcon(QIcon(R.png.show_list))
+
+        input_frame = QFrame()
+
+        input_layout = QHBoxLayout()
+        input_frame.setLayout(input_layout)
+        input_frame.layout().setContentsMargins(5, 0, 5, 0)
+        input_frame.layout().setSpacing(0)
+        input_frame.layout().addWidget(self.text_edit)
+        input_frame.layout().addWidget(self.btn_clear)
+        input_frame.layout().addWidget(self.btn_history)
 
         bar_layout = QHBoxLayout()
-        input_layout = QHBoxLayout()
-        input_layout.addWidget(self.text_edit)
-        input_layout.addWidget(self.btn_clear)
-        input_layout.addWidget(self.btn_history)
-        bar_layout.addLayout(input_layout)
+        bar_layout.addWidget(input_frame)
         bar_layout.addWidget(self.btn_search)
-
-        self.root_layout = QVBoxLayout()
-        self.root_layout.setSizeConstraint(QLayout.SetFixedSize)
-        self.root_layout.addLayout(bar_layout)
-        self.setLayout(self.root_layout)
+        self.btn_search.setObjectName("btn_search")
+        self.layout().addLayout(bar_layout)
 
         # 绑定信号量
         self.text_edit.textChanged.connect(self.__onInputChanged)
         self.text_edit.returnPressed.connect(self.__onSearch)
 
         self.btn_search.clicked.connect(self.__onSearch)
+        self.btn_clear.clicked.connect(self._onClear)
+
+    def _onClear(self):
+        self.text_edit.clear()
 
     def __center(self, widget):
         rect = widget.frameGeometry()
@@ -119,8 +134,10 @@ class SearchBanner(QWidget):
         self.detail_panel.hide()
         if self.text_edit.text() != '':
             self.index_list_panel.show()
+            self.btn_clear.show()
         else:
             self.index_list_panel.hide()
+            self.btn_clear.hide()
 
 
 if __name__ == '__main__':

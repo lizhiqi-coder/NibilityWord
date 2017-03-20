@@ -1,0 +1,28 @@
+QWidget {
+    background-color: white;
+    color: black;
+}
+
+QPushButton {
+    background-color: rgba(0, 0, 0, 0);
+    border: 0px solid;
+}
+
+QPushButton#btn_search {
+    background-color: rgba(0, 0, 0, 0);
+    border: 1px solid gray;
+    border-radius: 2px;
+    height: 30px;
+    width: 35px;
+}
+
+QLineEdit {
+    background-color: transparent;
+    border: 0px solid;
+}
+
+QFrame {
+    border: 1px solid gray;
+    background-color: lightgray;
+    border-radius: 5px;
+}

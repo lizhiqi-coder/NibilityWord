@@ -16,6 +16,17 @@ def __search_image():
     return result
 
 
+def __search_qss():
+    current_dir = os.path.abspath('.')
+    result = []
+    for root, sub_dirs, files in os.walk(current_dir):
+        for file in files:
+            if file.endswith('.qss') or file.endswith('.css'):
+                result.append(os.path.join(root, file))
+
+    return result
+
+
 def __build_image_indexing(index_list, namespace):
     buf = '#coding:utf-8\r\n'
     buf += 'class ' + namespace + '():'
@@ -29,6 +40,21 @@ def __build_image_indexing(index_list, namespace):
         buf += "'"
         buf += '\r\n'
 
+    return buf
+
+
+def __build_file_indexing(index_list, namespace):
+    buf = '\r'
+    buf += 'class ' + namespace + '():'
+    buf += '\r'
+    for index in index_list:
+        buf += '    '
+        buf += os.path.basename(index).split('.')[0]
+        buf += ' = '
+        buf += "r'"
+        buf += index
+        buf += "'"
+        buf += '\r\n'
     return buf
 
 
@@ -105,8 +131,11 @@ def start():
     int_dict = __parse_xml_values('./values/dimens.xml', 'dimen')
     buf += __build_int_values(int_dict, namespace='dimen')
 
+    qss_paths = __search_qss()
+    buf += __build_file_indexing(qss_paths, namespace='qss')
     __write_to_file(buf, R_file_path)
 
 
 if __name__ == '__main__':
     start()
+    print "R create succeed !"
