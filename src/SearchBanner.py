@@ -25,6 +25,7 @@ class SearchBanner(QWidget):
 
     def __initTransform(self):
         self.setGeometry(0, 0, 420, 60)
+        self.setWindowFlags(Qt.WindowStaysOnTopHint)
         self.setFixedWidth(self.width())
         self.__center(self)
         self.moveByCenter(100, 100)
@@ -104,8 +105,7 @@ class SearchBanner(QWidget):
     #         event.ignore()
 
     def __initDetailPanel(self):
-        self.detail_panel = DetailPanel()
-        self.detail_panel.initTransfrom(self.width(), 200)
+        self.detail_panel = DetailPanel(self.width(), 200)
         self.detail_panel.hide()
         self.root_layout.addWidget(self.detail_panel)
 
