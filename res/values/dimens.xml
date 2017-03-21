@@ -2,6 +2,7 @@
 <resources>
 
     <!-- conversation list -->
-    <dimen name="text_size">12</dimen>
+    <dimen name="text_size_small">12</dimen>
+    <dimen name="text_size_big">24</dimen>
 
 </resources>

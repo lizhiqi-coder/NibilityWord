@@ -20,11 +20,24 @@ class DetailPanel(QWidget):
         self.__initUI()
 
     def initTransfrom(self, w, h):
-        self.setGeometry(0, 0, w, h)
+        self.setGeometry(200, 200, w, h)
         # self.setFixedSize(w, h)
 
+    def _initHead(self):
+        self.head_bar = QFrame()
+        self.head_bar.setLayout(QHBoxLayout())
+        self.head_bar.layout().setAlignment(Qt.AlignLeft)
+        self.head_name = QLabel('head')
+        self.head_name.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)
+
+        font = QFont()
+        font.setBold(True)
+        font.setPixelSize(R.dimen.text_size_big)
+        self.head_name.setFont(font)
+        self.head_bar.layout().addWidget(self.head_name)
+
     def __initPhoneBar(self):
-        self.phone_bar = QLabel()
+        self.phone_bar = QFrame()
 
         bar_layout = QHBoxLayout()
         self.phone_bar.setLayout(bar_layout)
@@ -46,12 +59,15 @@ class DetailPanel(QWidget):
 
     def __initUI(self):
         NBUtils.bindStyleSheet(self, R.qss.global_style)
+        self._initHead()
         self.__initPhoneBar()
         self.__initExchangeListBar()
         self.__initOtherBar()
 
         self.root_layout = QVBoxLayout()
         self.setLayout(self.root_layout)
+        self.layout().setSpacing(0)
+        self.layout().addWidget(self.head_bar)
         self.layout().addWidget(self.phone_bar)
 
         # self.root_layout.addWidget(self.exchange_list_bar)
@@ -65,7 +81,7 @@ class PhItem(QFrame):
     def __init__(self, title=None, ph_symbol=None, sound=None):
         super(PhItem, self).__init__()
         self.title = title
-        self.ph_symbol = title
+        self.ph_symbol = ph_symbol
         self.sound = sound
         self._initUI()
 
