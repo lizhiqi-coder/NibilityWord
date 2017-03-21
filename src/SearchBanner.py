@@ -12,6 +12,7 @@ from interface import IPowerWord
 from DetailPanel import DetailPanel
 from IndexListPanel import IndexListPanel
 from res import R
+from utils import NBUtils
 
 
 class SearchBanner(QWidget):
@@ -29,10 +30,7 @@ class SearchBanner(QWidget):
         self.__center(self)
         self.moveByCenter(100, 100)
         self.setWindowFlags(Qt.WindowCloseButtonHint | Qt.WindowStaysOnTopHint)
-        global_style_file = QFile(R.qss.global_style)
-        global_style_file.open(QFile.ReadOnly)
-
-        self.setStyleSheet(str(global_style_file.readAll()))
+        NBUtils.bindStyleSheet(self, R.qss.global_style)
 
     def __initTitle(self):
         self.setWindowTitle(u'牛霸词典')

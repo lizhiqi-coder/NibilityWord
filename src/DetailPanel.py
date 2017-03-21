@@ -7,9 +7,10 @@ except ImportError:
     from PyQt4.QtCore import *
     from PyQt4.QtGui import *
 
-from model.DetailModel import DetailModel
-from res import R
 import sys
+
+from res import R
+from utils import NBUtils
 
 
 class DetailPanel(QWidget):
@@ -53,17 +54,17 @@ class DetailPanel(QWidget):
         pass
 
     def __initUI(self):
+        NBUtils.bindStyleSheet(self, R.qss.global_style)
         self.__initPhoneBar()
         self.__initExchangeListBar()
         self.__initOtherBar()
 
         self.root_layout = QVBoxLayout()
-        self.root_layout.addWidget(self.phone_bar)
+        self.setLayout(self.root_layout)
+        self.layout().addWidget(self.phone_bar)
+
         # self.root_layout.addWidget(self.exchange_list_bar)
         # self.root_layout.addWidget(self.other_bar)
-
-        self.setLayout(self.root_layout)
-
 
     def display(self, result):
         pass
@@ -71,6 +72,6 @@ class DetailPanel(QWidget):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    panel = DetailPanel(300,100)
+    panel = DetailPanel(300, 100)
     panel.show()
     sys.exit(app.exec_())
