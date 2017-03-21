@@ -43,16 +43,15 @@ class DetailPanel(QWidget):
         self.phone_bar.setLayout(bar_layout)
         self.phone_bar.layout().setAlignment(Qt.AlignLeft)
 
-        item = PhItem(title=u'英/美', ph_symbol=u'[音标]')
+        # item = PhItem(title=u'英/美', ph_symbol=u'[音标]')
 
-        self.phone_bar.layout().addWidget(item)
+        # self.phone_bar.layout().addWidget(item)
 
         pass
 
     def _initMeaningListBar(self):
-        dict = {'1': '2'}
         self.meaning_list_bar = BuddyListWidget()
-        self.meaning_list_bar.setData(dict)
+        # self.meaning_list_bar.setData({})
         pass
 
     def __initOtherBar(self):
@@ -76,7 +75,24 @@ class DetailPanel(QWidget):
         # self.root_layout.addWidget(self.other_bar)
 
     def display(self, result):
-        pass
+        self.head_name.setText(result.word_name)
+        for symbol in result.symbols:
+            item = PhItem(title=u'英', ph_symbol=symbol.ph['ph_en'][0],
+                          sound=symbol.ph['ph_en'][1])
+            item2 = PhItem(title=u'美', ph_symbol=symbol.ph['ph_am'][0],
+                           sound=symbol.ph['ph_am'][1])
+
+            self.phone_bar.layout().addWidget(item)
+            self.phone_bar.layout().addWidget(item2)
+
+            meaning_dict = {}
+            for key in symbol.part_means:
+                meaning = ''
+                for i in symbol.part_means[key]:
+                    meaning += (i + ';')
+                meaning_dict[key] = meaning
+
+            self.meaning_list_bar.setData(meaning_dict)
 
 
 # -------------------------------------------------------------------#
@@ -84,7 +100,7 @@ class PhItem(QFrame):
     def __init__(self, title=None, ph_symbol=None, sound=None):
         super(PhItem, self).__init__()
         self.title = title
-        self.ph_symbol = ph_symbol
+        self.ph_symbol = '[' + ph_symbol + ']'
         self.sound = sound
         self._initUI()
 

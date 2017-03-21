@@ -45,14 +45,14 @@ def __parse_json(json_data):
     )
     _symbols = []
     for js_symbol in json_data['symbols']:
-        _means = []
+        part_means = {}
         for item in js_symbol['parts']:
-            _means.append(item['means'])
+            part_means[item['part']] = item['means']
         _symbol = symbol(js_symbol['ph_en'],
                          js_symbol['ph_en_mp3'],
                          js_symbol['ph_am'],
                          js_symbol['ph_am_mp3'],
-                         _means)
+                         part_means)
         _symbols.append(_symbol)
 
     _result = DetailModel(json_data['word_name'], _exchange, _symbols)

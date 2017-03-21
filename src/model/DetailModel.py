@@ -22,9 +22,10 @@ class exchange:
 
 
 class symbol:
-    def __init__(self, ph_en, ph_en_mp3, ph_am, ph_am_mp3, means):
-        self.ph = {ph_en: ph_en_mp3, ph_am: ph_am_mp3}
-        self.means = means  # list
+    def __init__(self, ph_en, ph_en_mp3, ph_am, ph_am_mp3, part_means):
+        self.ph = {'ph_en': [ph_en, ph_en_mp3],
+                   'ph_am': [ph_am, ph_am_mp3]}
+        self.part_means = part_means  # dict
 
 
 class DetailModel:

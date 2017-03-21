@@ -99,14 +99,12 @@ class SearchBanner(QWidget):
             self.index_list_panel.hide()
             if result != None:
                 self.detail_panel.show()
-                self.__displayResult(result)
+                self.detail_panel.display(result=result)
             else:
                 self.detail_panel.hide()
         except:
             print 'onSearch except'
 
-    def __displayResult(self, result):
-        pass
 
     # def closeEvent(self, event):
     #     reply = QMessageBox.question(self, 'tip',
