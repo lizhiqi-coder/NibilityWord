@@ -42,7 +42,7 @@ class SearchBanner(QWidget):
         self.setLayout(self.root_layout)
 
         self.text_edit = QLineEdit()
-        self.text_edit.setFont(QFont(R.string.Helvetica, R.dimen.text_size))
+        self.text_edit.setFont(QFont(R.string.Helvetica, R.dimen.text_size_small))
         self.text_edit.setFixedHeight(35)
         self.text_edit.setFocus()
         self.btn_search = QPushButton()

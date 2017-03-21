@@ -49,8 +49,9 @@ class DetailPanel(QWidget):
 
         pass
 
-    def __initExchangeListBar(self):
-        self.exchange_list_bar = QListWidget()
+    def _initMeaningListBar(self):
+        self.meaning_list_bar = BuddyListBar()
+
         pass
 
     def __initOtherBar(self):
@@ -61,7 +62,7 @@ class DetailPanel(QWidget):
         NBUtils.bindStyleSheet(self, R.qss.global_style)
         self._initHead()
         self.__initPhoneBar()
-        self.__initExchangeListBar()
+        self._initMeaningListBar()
         self.__initOtherBar()
 
         self.root_layout = QVBoxLayout()
@@ -70,7 +71,7 @@ class DetailPanel(QWidget):
         self.layout().addWidget(self.head_bar)
         self.layout().addWidget(self.phone_bar)
 
-        # self.root_layout.addWidget(self.exchange_list_bar)
+        self.root_layout.addWidget(self.meaning_list_bar)
         # self.root_layout.addWidget(self.other_bar)
 
     def display(self, result):
@@ -107,6 +108,16 @@ class PhItem(QFrame):
 
     def _onDisplaySound(self):
         print 'display sound'
+
+
+class BuddyListBar(QListWidget):
+    def __init__(self, dict={}):
+        super(BuddyListBar, self).__init__()
+        self.__initUI()
+        self._dict = dict
+
+    def __initUI(self):
+        pass
 
 
 if __name__ == '__main__':
