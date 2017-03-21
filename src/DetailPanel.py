@@ -27,21 +27,12 @@ class DetailPanel(QWidget):
         self.phone_bar = QLabel()
 
         bar_layout = QHBoxLayout()
-        ph_item_layout = QHBoxLayout()
-        title = QLabel(u'英/美')
-        ph_symbol = QLabel(u'[音标]')
-        sound_btn = QPushButton()
-        sound_btn.setIcon(QIcon(R.png.sound))
-        ph_item_layout.addWidget(title)
-        ph_item_layout.addWidget(ph_symbol)
-        ph_item_layout.addWidget(sound_btn)
-
-        ph_item = QFrame()
-        ph_item.setLayout(ph_item_layout)
-
-        bar_layout.addWidget(ph_item)
-
         self.phone_bar.setLayout(bar_layout)
+        self.phone_bar.layout().setAlignment(Qt.AlignLeft)
+
+        item = PhItem(title=u'英/美', ph_symbol=u'[音标]')
+
+        self.phone_bar.layout().addWidget(item)
 
         pass
 
@@ -68,6 +59,38 @@ class DetailPanel(QWidget):
 
     def display(self, result):
         pass
+
+
+class PhItem(QFrame):
+    def __init__(self, title=None, ph_symbol=None, sound=None):
+        super(PhItem, self).__init__()
+        self.title = title
+        self.ph_symbol = title
+        self.sound = sound
+        self._initUI()
+
+    def _initUI(self):
+        ph_item_layout = QHBoxLayout()
+
+        self.setLayout(ph_item_layout)
+        self.layout().setContentsMargins(0, 0, 0, 0)
+        self.layout().setSpacing(0)
+        self.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)
+
+        lb_title = QLabel(u'英/美')
+        lb_ph_symbol = QLabel(u'[音标]')
+        btn_sound = QPushButton()
+        btn_sound.setIcon(QIcon(R.png.sound))
+        ph_item_layout.addWidget(lb_title)
+        ph_item_layout.addWidget(lb_ph_symbol)
+        ph_item_layout.addWidget(btn_sound)
+
+        lb_title.setText(self.title)
+        lb_ph_symbol.setText(self.ph_symbol)
+        btn_sound.clicked.connect(self._onDisplaySound)
+
+    def _onDisplaySound(self):
+        print 'display sound'
 
 
 if __name__ == '__main__':
