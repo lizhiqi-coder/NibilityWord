@@ -9,6 +9,7 @@ except ImportError:
 
 import sys
 
+from BuddyListWidget import BuddyListWidget
 from res import R
 from utils import NBUtils
 
@@ -21,7 +22,6 @@ class DetailPanel(QWidget):
 
     def initTransfrom(self, w, h):
         self.setGeometry(200, 200, w, h)
-        # self.setFixedSize(w, h)
 
     def _initHead(self):
         self.head_bar = QFrame()
@@ -50,8 +50,9 @@ class DetailPanel(QWidget):
         pass
 
     def _initMeaningListBar(self):
-        self.meaning_list_bar = BuddyListBar()
-
+        dict = {'1': '2'}
+        self.meaning_list_bar = BuddyListWidget()
+        self.meaning_list_bar.setData(dict)
         pass
 
     def __initOtherBar(self):
@@ -78,6 +79,7 @@ class DetailPanel(QWidget):
         pass
 
 
+# -------------------------------------------------------------------#
 class PhItem(QFrame):
     def __init__(self, title=None, ph_symbol=None, sound=None):
         super(PhItem, self).__init__()
@@ -110,14 +112,8 @@ class PhItem(QFrame):
         print 'display sound'
 
 
-class BuddyListBar(QListWidget):
-    def __init__(self, dict={}):
-        super(BuddyListBar, self).__init__()
-        self.__initUI()
-        self._dict = dict
+# -------------------------------------------------------------------#
 
-    def __initUI(self):
-        pass
 
 
 if __name__ == '__main__':
