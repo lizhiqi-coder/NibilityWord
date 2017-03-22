@@ -93,18 +93,18 @@ class SearchBanner(QWidget):
     def __onSearch(self):
         print '__onSearch'
         key_word = ''
+        result = None
         try:
             key_word = self.text_edit.text()
             result = IPowerWord.translate(key_word)
             self.index_list_panel.hide()
-            if result != None:
-                self.detail_panel.show()
-                self.detail_panel.display(result=result)
-            else:
-                self.detail_panel.hide()
         except:
             print 'onSearch except'
-
+        if result != None:
+            self.detail_panel.show()
+            self.detail_panel.display(result=result)
+        else:
+            self.detail_panel.hide()
 
     # def closeEvent(self, event):
     #     reply = QMessageBox.question(self, 'tip',

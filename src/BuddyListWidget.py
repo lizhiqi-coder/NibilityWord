@@ -17,6 +17,7 @@ class BuddyListWidget(QListWidget):
         pass
 
     def setData(self, dict={}):
+        self.clear()
         for key in dict:
             m_item = BuddyListWidget.BuddyListItem(key, dict[key])
             item = QListWidgetItem()

@@ -43,9 +43,11 @@ class DetailPanel(QWidget):
         self.phone_bar.setLayout(bar_layout)
         self.phone_bar.layout().setAlignment(Qt.AlignLeft)
 
-        # item = PhItem(title=u'英/美', ph_symbol=u'[音标]')
+        self.ph_item = PhItem()
+        self.ph_item2 = PhItem()
 
-        # self.phone_bar.layout().addWidget(item)
+        self.phone_bar.layout().addWidget(self.ph_item)
+        self.phone_bar.layout().addWidget(self.ph_item2)
 
         pass
 
@@ -77,13 +79,10 @@ class DetailPanel(QWidget):
     def display(self, result):
         self.head_name.setText(result.word_name)
         for symbol in result.symbols:
-            item = PhItem(title=u'英', ph_symbol=symbol.ph['ph_en'][0],
-                          sound=symbol.ph['ph_en'][1])
-            item2 = PhItem(title=u'美', ph_symbol=symbol.ph['ph_am'][0],
-                           sound=symbol.ph['ph_am'][1])
-
-            self.phone_bar.layout().addWidget(item)
-            self.phone_bar.layout().addWidget(item2)
+            self.ph_item.show(title=u'英', ph_symbol=symbol.ph['ph_en'][0],
+                              sound=symbol.ph['ph_en'][1])
+            self.ph_item2.show(title=u'美', ph_symbol=symbol.ph['ph_am'][0],
+                               sound=symbol.ph['ph_am'][1])
 
             meaning_dict = {}
             for key in symbol.part_means:
@@ -97,11 +96,8 @@ class DetailPanel(QWidget):
 
 # -------------------------------------------------------------------#
 class PhItem(QFrame):
-    def __init__(self, title=None, ph_symbol=None, sound=None):
+    def __init__(self):
         super(PhItem, self).__init__()
-        self.title = title
-        self.ph_symbol = '[' + ph_symbol + ']'
-        self.sound = sound
         self._initUI()
 
     def _initUI(self):
@@ -112,17 +108,21 @@ class PhItem(QFrame):
         self.layout().setSpacing(0)
         self.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)
 
-        lb_title = QLabel(u'英/美')
-        lb_ph_symbol = QLabel(u'[音标]')
-        btn_sound = QPushButton()
-        btn_sound.setIcon(QIcon(R.png.sound))
-        ph_item_layout.addWidget(lb_title)
-        ph_item_layout.addWidget(lb_ph_symbol)
-        ph_item_layout.addWidget(btn_sound)
+        self.lb_title = QLabel(u'英/美')
+        self.lb_ph_symbol = QLabel(u'[音标]')
+        self.btn_sound = QPushButton()
+        self.btn_sound.setIcon(QIcon(R.png.sound))
+        ph_item_layout.addWidget(self.lb_title)
+        ph_item_layout.addWidget(self.lb_ph_symbol)
+        ph_item_layout.addWidget(self.btn_sound)
+        self.btn_sound.clicked.connect(self._onDisplaySound)
 
-        lb_title.setText(self.title)
-        lb_ph_symbol.setText(self.ph_symbol)
-        btn_sound.clicked.connect(self._onDisplaySound)
+    def show(self, title=None, ph_symbol=None, sound=None):
+        self.title = title
+        self.ph_symbol = '[' + ph_symbol + ']'
+        self.sound = sound
+        self.lb_title.setText(self.title)
+        self.lb_ph_symbol.setText(self.ph_symbol)
 
     def _onDisplaySound(self):
         print 'display sound'
