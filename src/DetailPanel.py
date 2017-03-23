@@ -69,7 +69,9 @@ class DetailPanel(QWidget):
 
         self.root_layout = QVBoxLayout()
         self.setLayout(self.root_layout)
+        self.layout().setContentsMargins(0,0,0,0)
         self.layout().setSpacing(0)
+
         self.layout().addWidget(self.head_bar)
         self.layout().addWidget(self.phone_bar)
 
