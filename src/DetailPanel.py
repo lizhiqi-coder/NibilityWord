@@ -12,6 +12,7 @@ import sys
 from BuddyListWidget import BuddyListWidget
 from res import R
 from utils import NBUtils
+from utils.MediaUtils import MediaLoader, MediaConfig
 
 
 class DetailPanel(QWidget):
@@ -69,7 +70,7 @@ class DetailPanel(QWidget):
 
         self.root_layout = QVBoxLayout()
         self.setLayout(self.root_layout)
-        self.layout().setContentsMargins(0,0,0,0)
+        self.layout().setContentsMargins(0, 0, 0, 0)
         self.layout().setSpacing(0)
 
         self.layout().addWidget(self.head_bar)
@@ -97,6 +98,7 @@ class DetailPanel(QWidget):
 
 
 # -------------------------------------------------------------------#
+
 class PhItem(QFrame):
     def __init__(self):
         super(PhItem, self).__init__()
@@ -122,12 +124,18 @@ class PhItem(QFrame):
     def show(self, title=None, ph_symbol=None, sound=None):
         self.title = title
         self.ph_symbol = '[' + ph_symbol + ']'
-        self.sound = sound
+        if sound == None or sound == "":
+            self.btn_sound.hide()
+        else:
+            self.sound = sound
+            self.btn_sound.show()
         self.lb_title.setText(self.title)
         self.lb_ph_symbol.setText(self.ph_symbol)
 
     def _onDisplaySound(self):
         print 'display sound'
+        print self.sound
+        MediaLoader.getInstance().loadMedia(self.sound).playAudio()
 
 
 # -------------------------------------------------------------------#
