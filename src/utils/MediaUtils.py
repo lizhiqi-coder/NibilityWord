@@ -81,9 +81,10 @@ class MediaLoader():
             self._media_path = local_search_result
             self._media_url = None
         else:
-            download_runable = functools.partial(download(myurl=self._media_url,
-                                                          saveDir=self._conf.savePath,
-                                                          _callback=self._mediaDownloadCallback))
+            download_runable = functools.partial(download, self._media_url,
+                                                 self._conf.savePath,
+                                                 self._mediaDownloadCallback)
+
             self.work = WorkThread(download_runable)
             self.work.start()
         return self
@@ -97,7 +98,7 @@ class MediaLoader():
             print 'download succeed'
             self._media_path = localSearch(hashUrl(self._media_url), self._conf.savePath)
         else:
-            print 'download failed'
+            print percent
 
     def playAudio(self):
         if self.work and not self.work.isStopped():
