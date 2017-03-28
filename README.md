@@ -13,4 +13,5 @@
 ##安装环境：
 * python2.7
 * pyqt or pyside
+* pygame(用于音频播放)
 

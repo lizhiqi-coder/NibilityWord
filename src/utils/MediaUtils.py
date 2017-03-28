@@ -1,16 +1,12 @@
 # coding:utf-8
-import urllib
-import threading
-import os
-from src.base.Thread import WorkThread
 import functools
+import os
+import threading
+import urllib
 
-try:
+import pygame.mixer as AudioPlayer
 
-    from PySide.phonon import Phonon
-except ImportError:
-
-    from PyQt4.phonon import Phonon
+from src.base.Thread import WorkThread
 
 
 def hashUrl(url):
@@ -69,6 +65,7 @@ class MediaLoader():
 
     def config(self, conf):
         self._conf = conf
+        AudioPlayer.init()
         return self
 
     def loadMedia(self, mediaUrl):
@@ -105,6 +102,5 @@ class MediaLoader():
             self.work.wait()
 
         if self._media_path:
-            audioPlayer = Phonon.createPlayer(Phonon.MusicCategory,
-                                              Phonon.MediaSource(self._media_path))
-            audioPlayer.play()
+            AudioPlayer.music.load(self._media_path)
+            AudioPlayer.music.play()
