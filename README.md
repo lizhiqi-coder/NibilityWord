@@ -21,4 +21,6 @@
 ##参考资料：
 * 本地离线词典使用lingoes格式:http://www.cnblogs.com/SuperBrothers/archive/2012/11/24/2785971.html
 * lingoes词典文件(ld2,ldx)解析:https://github.com/librehat/kdictionary-lingoes
+* https://github.com/pingjiang/opendict
+* https://github.com/PurlingNayuki/lingoes-extractor
 * python操作字节流:http://www.jianshu.com/p/5a985f29fa81
