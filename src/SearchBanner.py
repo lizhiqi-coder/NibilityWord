@@ -24,6 +24,8 @@ class SearchBanner(QWidget):
         self.__initDetailPanel()
         self.__initListPanel()
 
+        self._initShortcut()
+
     def __initTransform(self):
         self.setGeometry(0, 0, 420, 60)
         self.setFixedWidth(self.width())
@@ -134,6 +136,20 @@ class SearchBanner(QWidget):
         else:
             self.index_list_panel.hide()
             self.btn_clear.hide()
+
+    def _initShortcut(self):
+
+        show_win_action = QAction(self)
+        show_win_action.setShortcut(QKeySequence(Qt.ALT + Qt.Key_F))
+        show_win_action.triggered.connect(self._onShowWinAction)
+        self.insertAction(show_win_action, show_win_action)
+
+    def _onShowWinAction(self):
+        print '_onShowWinAction'
+        if self.isHidden():
+            self.show()
+        else:
+            self.hide()
 
 
 if __name__ == '__main__':
