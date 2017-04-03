@@ -6,6 +6,7 @@ except:
     from PyQt4.QtCore import *
 
 import struct
+from Bean import *
 
 """
 读取二进制文件->读取头->读取索引->读取数据块(blocks)
@@ -165,7 +166,6 @@ class LingoesDictReader():
             _pos += LENGTH_INT
             self.deflateStreams.append(flatOffset)
 
-
     def _decompress(self):
         """解压"""
         # 索引读完就到数据块block
@@ -181,27 +181,6 @@ class LingoesDictReader():
 
         # 以下是读取数据块，我想读入内存中
 
-
-
-    def _extract(self):
-        """提取"""
-        pass
-
-    def _detectEncodings(self, inflateBytes, offsetWords, offXml, defTotal, dataLen, idxData=[]):
-        pass
-
-    def _readDefinitionData(self):
-        pass
-
-    def _getIdxData(self, inflateBytes, pos):
-        return
-
-    def _strip(self):
-        pass
-
-    def extractToFile(self):
-        pass
-
     def _buildDefinitionsArray(self):
         for i in range(0, self.indexing.definitions):
             val = self.getIntFromRaw(self.indexing.offsetIndex + i * LENGTH_INT)
@@ -210,6 +189,67 @@ class LingoesDictReader():
     def getIntFromRaw(self, pos):
 
         return struct.unpack('i', self.dataRawBytes[pos:pos + LENGTH_INT])[0]
+
+
+class LingoesInflateDictReader():
+    def __int__(self, inflateBuffer, tableLen, wordsLen, xmlsLen):
+        self._offsetTable = DictOffsetTable()
+        self._dict = {}
+        self._inflateBuffer = inflateBuffer
+        self._tableLen = tableLen
+        self._wordsLen = wordsLen
+        self._xmlsLen = xmlsLen
+
+        self._wordsOffset = -1
+        self._xmlOffset = -1
+
+        self._readDeflate()
+
+    def _readDictOffset(self):
+        _pos = 0
+        wordOffset = self.getIntFromRaw(self._inflateBuffer, _pos)
+        _pos += LENGTH_INT
+        xmlOffset = self.getIntFromRaw(self._inflateBuffer, _pos)
+        _pos += LENGTH_INT
+        flag = self._inflateBuffer[_pos]
+        _pos += 1
+        ref = self._inflateBuffer[_pos]
+
+        return DictOffset(wordOffset, xmlOffset, flag, ref)
+
+    def _readDictWord(self, dictOffset, refs):
+        indexPos = self._wordsOffset + dictOffset.wordOffset
+        wordPos = indexPos + refs * 4
+        wordLen = -1
+        if dictOffset._next == None:
+            wordLen = self._xmlOffset - dictOffset.wordOffset - refs * 4
+        else:
+            wordLen = dictOffset.getWordLength() - refs * 4
+
+        return self._inflateBuffer[wordPos, wordLen].decode()
+
+    def _readXml(self):
+        return
+
+    def _constructOffsetTable(self):
+        tableSize = self._tableLen / DictOffset.bytes()
+        for i in range(0, tableSize):
+            dictOffset = self._readDictOffset()
+            self._offsetTable.add(dictOffset)
+
+        return
+
+    def _readDeflate(self):
+        self._constructOffsetTable()
+        for i in range(0, self._offsetTable.size() - 1):
+            dictOffset = self._offsetTable.get(i)
+            refs = dictOffset.ref
+            dictWord = self._readDictWord(dictOffset, refs)
+            wordPosBase = self._wordsOffset + dictOffset.wordOffset
+
+    def getIntFromRaw(self, byteBuff, pos):
+
+        return struct.unpack('i', byteBuff[pos:pos + LENGTH_INT])[0]
 
 
 if __name__ == '__main__':
