@@ -11,6 +11,7 @@ import zlib
 from Bean import *
 from StringIO import StringIO
 import array
+from enum import Enum
 
 """
 读取二进制文件->读取头->读取索引->读取数据块(blocks)
@@ -65,6 +66,13 @@ class Indexing():
         self.inflatWordsLength = -1
         self.inflatXmlLength = -1
         self.offsetIndex = -1  # 单词索引的开始位置
+
+
+class Charset(Enum):
+    UTF_8 = 'UTF-8'
+    UTF_16LE = 'UTF-16LE'
+    UTF_16BE = 'UTF-16BE'
+    EUC_JP = 'EUC-JP'
 
 
 class LingoesDictReader():
@@ -218,15 +226,20 @@ class LingoesDictReader():
             self.decompressedBuf.write(dec_temp_buf)
             lastOffset = offset
 
-        print self.decompressedBuf.getvalue()
-
+        print len(self.decompressedBuf.getvalue())
         out_file = open('./out.txt', 'w')
         out_file.write(self.decompressedBuf.getvalue())
 
-    def _buildDefinitionsArray(self):
-        for i in range(0, self.indexing.definitions):
-            val = self.getIntFromRaw(self.indexing.offsetIndex + i * LENGTH_INT)
-            self.definitionsArray.append(val)
+    def extract(self, indexFile, extractedWordsFile, extractedXmlFile, extractedOutputFile,
+                idxArray, offsetDefs, offsetXml):
+
+        dataLen = 10;
+        defTotal = offsetDefs / dataLen - 1
+        words = []  # defTotal
+        idxData = []  # 6
+        defData = []  # 2
+
+        return
 
     def getIntFromRaw(self, pos):
         return struct.unpack('i', self.dataRawBytes[pos:pos + LENGTH_INT])[0]
@@ -237,68 +250,88 @@ class LingoesDictReader():
     def getLongFromRaw(self, pos):
         return struct.unpack('l', self.dataRawBytes[pos:pos + LENGTH_LONG])[0]
 
+    def getInt(self, bytea, pos):
+        return struct.unpack('i', bytea[pos:pos + LENGTH_INT])[0]
 
-class LingoesInflateDictReader():
-    def __int__(self, inflateBuffer, tableLen, wordsLen, xmlsLen):
-        self._offsetTable = DictOffsetTable()
-        self._dict = {}
-        self._inflateBuffer = inflateBuffer
-        self._tableLen = tableLen
-        self._wordsLen = wordsLen
-        self._xmlsLen = xmlsLen
-        self._totalLen = self._tableLen + self._wordsLen + self._xmlsLen
-
-        self._wordsOffset = -1
-        self._xmlOffset = -1
-
-        self._readDeflate()
-
-    def getDict(self):
-        return self._dict
-
-    def _readDictOffset(self):
-        _pos = 0
-        wordOffset = self.getIntFromRaw(self._inflateBuffer, _pos)
-        _pos += LENGTH_INT
-        xmlOffset = self.getIntFromRaw(self._inflateBuffer, _pos)
-        _pos += LENGTH_INT
-        flag = self._inflateBuffer[_pos]
-        _pos += 1
-        ref = self._inflateBuffer[_pos]
-
-        return DictOffset(wordOffset, xmlOffset, flag, ref)
-
-    def _readDictWord(self, dictOffset, refs):
-        indexPos = self._wordsOffset + dictOffset.wordOffset
-        wordPos = indexPos + refs * 4
-        wordLen = -1
-        if dictOffset._next == None:
-            wordLen = self._xmlOffset - dictOffset.wordOffset - refs * 4
+    def dectectEncodings(self, byteBuf, offsetWords, offsetXml, defTotal,
+                         dataLen, idxData, defData, i):
+        if (defTotal < 10):
+            test = defTotal
         else:
-            wordLen = dictOffset.getWordLength() - refs * 4
+            test = 10
 
-        return self._inflateBuffer[wordPos, wordLen].decode()
+        for wordDec in Charset:
+            for xmlDec in Charset:
 
-    def _readXml(self):
+                try:
+                    self.readDefinitionData(byteBuf, offsetWords, offsetXml, dataLen, wordDec, xmlDec,
+                                            idxData, defData, test)
+                    print '词组编码：', wordDec
+                    print 'xml编码：', xmlDec
+                    return (wordDec, xmlDec)
+                except:
+                    pass
+        print 'dectect encoding failed default is UTF-16LE'
+        return (Charset.UTF_16LE, Charset.UTF_16LE)
+
+    def readDefinitionData(self, bytebuf, offsetWords, offsetXml, dataLen, wordDecoder, xmlDecoder,
+                           idxData, defData, i):
+        idxData = self.getIdxData(bytebuf, dataLen * i, idxData)
+        lastWordPos = idxData[0]
+        lastXmlPos = idxData[1]
+        flags = idxData[2]
+        refs = idxData[3]
+        currentWordOffset = idxData[4]
+        currentXmlOffset = idxData[5]
+
+        xml = bytebuf[offsetXml + lastXmlPos, offsetXml + currentXmlOffset].decode(xmlDecoder)
+        while refs > 0:
+            ref = self.getInt(bytebuf, offsetWords + lastWordPos)
+            idxData = self.getIdxData(bytebuf, dataLen * ref, idxData)
+            lastXmlPos = idxData[0]
+            currentXmlOffset = idxData[5]
+            if xml == None or xml == '':
+                xml = bytebuf[offsetXml + lastXmlPos, offsetXml + currentXmlOffset].decode(xmlDecoder)
+            else:
+                xml = bytebuf[offsetXml + lastXmlPos, offsetXml + currentXmlOffset].decode(xmlDecoder) + ',' + xml
+            lastWordPos += 4
+            refs -= 1
+
+        defData[1] = xml
+        word = bytebuf[offsetWords + lastWordPos, offsetWords + currentWordOffset].decode(wordDecoder)
+        defData[0] = word
+        return defData
+
+    def getIdxData(self, bytebuf, pos, wordIdxData=[]):
+        wordIdxData[0] = struct.unpack('i', bytebuf[pos:pos + LENGTH_INT])[0]
+        pos += LENGTH_INT
+        wordIdxData[1] = struct.unpack('i', bytebuf[pos:pos + LENGTH_INT])[0]
+        pos += LENGTH_INT
+        wordIdxData[2] = bytebuf[pos] & 0xff
+        pos += 1
+        wordIdxData[3] = bytebuf[pos] & 0xff
+        pos += 1
+        wordIdxData[4] = struct.unpack('i', bytebuf[pos:pos + LENGTH_INT])[0]
+        pos += LENGTH_INT
+        wordIdxData[6] = struct.unpack('i', bytebuf[pos:pos + LENGTH_INT])[0]
+
+        return wordIdxData
+
+
+class SensitiveStringDecoder():
+    def __int__(self, decoder, name):
+        self.name = ''
+        self.charsetDecoder = decoder
+        self.name = name
+
+    def decode(self, ba, off, len):
         return
 
-    def _constructOffsetTable(self):
-        tableSize = self._tableLen / DictOffset.bytes()
-        for i in range(0, tableSize):
-            dictOffset = self._readDictOffset()
-            self._offsetTable.add(dictOffset)
-
-    def _readDeflate(self):
-        self._constructOffsetTable()
-        for i in range(0, self._offsetTable.size() - 1):
-            dictOffset = self._offsetTable.get(i)
-            refs = dictOffset.ref
-            dictWord = self._readDictWord(dictOffset, refs)
-            wordPosBase = self._wordsOffset + dictOffset.wordOffset
-
-    def getIntFromRaw(self, byteBuff, pos):
-
-        return struct.unpack('i', byteBuff[pos:pos + LENGTH_INT])[0]
+    def safeTrim(self, ca, len):
+        if len == len(ca):
+            return ca;
+        else:
+            return ca[:len]
 
 
 if __name__ == '__main__':

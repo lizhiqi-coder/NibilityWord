@@ -1,4 +1,4 @@
-# NiubilityWord
+# NiubilityWord--牛霸词典
 * 跨平台词典翻译工具
 * 模仿金山词霸查词工具条
 * 针对经常需要看英文文档的英语渣渣而设计
@@ -19,10 +19,11 @@
 * pygame(用于音频播放)
 * multiprocessing (用于实现守护进程)
 * [pyhook(window平台快捷键设置)]
+* JPype:调用lingoes词典解析核心算法
 
 ##参考资料：
 * 本地离线词典使用lingoes格式:http://www.cnblogs.com/SuperBrothers/archive/2012/11/24/2785971.html
 * lingoes词典文件(ld2,ldx)解析:https://github.com/librehat/kdictionary-lingoes
 * https://github.com/pingjiang/opendict
-* https://github.com/PurlingNayuki/lingoes-extractor
+* https://github.com/tiancaihb/DangoDict
 * python操作字节流:http://www.jianshu.com/p/5a985f29fa81
