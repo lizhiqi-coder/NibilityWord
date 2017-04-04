@@ -6,6 +6,8 @@ except:
     from PyQt4.QtCore import *
 
 import struct
+import zlib
+
 from Bean import *
 
 """
@@ -166,14 +168,8 @@ class LingoesDictReader():
             _pos += LENGTH_INT
             self.deflateStreams.append(flatOffset)
 
-    def _decompress(self):
+    def decompress(self):
         """解压"""
-        # 索引读完就到数据块block
-        # 块长度=数组下一个值-当前值
-        #
-        # 因为前面索引部分读完,这里就是blocks数据块开始的位置
-        # 索引内容的偏移地址都是相对于这个地址
-        # 0表示 前一个数据块偏移地址
         startOffset = self.position
         offset = -1
         # 上一个数据块偏移地址
@@ -187,7 +183,6 @@ class LingoesDictReader():
             self.definitionsArray.append(val)
 
     def getIntFromRaw(self, pos):
-
         return struct.unpack('i', self.dataRawBytes[pos:pos + LENGTH_INT])[0]
 
 
@@ -199,11 +194,15 @@ class LingoesInflateDictReader():
         self._tableLen = tableLen
         self._wordsLen = wordsLen
         self._xmlsLen = xmlsLen
+        self._totalLen = self._tableLen + self._wordsLen + self._xmlsLen
 
         self._wordsOffset = -1
         self._xmlOffset = -1
 
         self._readDeflate()
+
+    def getDict(self):
+        return self._dict
 
     def _readDictOffset(self):
         _pos = 0
@@ -237,8 +236,6 @@ class LingoesInflateDictReader():
             dictOffset = self._readDictOffset()
             self._offsetTable.add(dictOffset)
 
-        return
-
     def _readDeflate(self):
         self._constructOffsetTable()
         for i in range(0, self._offsetTable.size() - 1):
@@ -256,4 +253,4 @@ if __name__ == '__main__':
     import os
 
     # LingoesDictReader(os.path.abspath('../../data/localDicts/Vicon English-Chinese(S) Dictionary.ld2'))
-    LingoesDictReader(os.path.abspath('../../data/localDicts/dict.ld2'))
+    LingoesDictReader(os.path.abspath('../../data/localDicts/dict.ld2')).decompress()
