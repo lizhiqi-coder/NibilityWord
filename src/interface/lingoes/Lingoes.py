@@ -9,6 +9,8 @@ import struct
 import zlib
 
 from Bean import *
+from StringIO import StringIO
+import array
 
 """
 读取二进制文件->读取头->读取索引->读取数据块(blocks)
@@ -50,7 +52,7 @@ class Header():
 class Indexing():
     def __init__(self):
         self.dictType = -1  # 3表示本地字典
-        self.withIndexOffset = -1
+        # self.withIndexOffset = -1
         self.limit = -1  # 自己加的字段
         self.compressDataOffset = -1
 
@@ -83,18 +85,31 @@ class LingoesDictReader():
         self._readHeader()
         self.header.infoPosition = self.position
 
-        assert self.dataRawBytes.__len__() > self.header.infoPosition
+        print '文件：', file_path
+        print 'type', self.dataRawBytes[0:4].decode()
+        print 'version', self.getShortFromRaw(0x18), '.', self.getShortFromRaw(0x1A)
+        print 'ID : 0x%x' % self.getLongFromRaw(0x1C)
 
-        dict_type = self.getIntFromRaw(self.header.infoPosition)
+        offsetData = self.getIntFromRaw(0x5C) + 0x60
+        if len(self.dataRawBytes) > offsetData:
+            print 'introduce address : 0x%x' % offsetData
 
-        print dict_type
-        if dict_type == 3:
-            print 'this is the type i want'
-            self._readDictionary(self.header.infoPosition)
+            dict_type = self.getIntFromRaw(offsetData)
+
+            print 'introduce type ；0x%x' % dict_type
+            offsetWithInfo = self.getIntFromRaw(offsetData + 4) + offsetData + 12
+
+            if dict_type == 3:
+                self._readDictionary(offsetData)
+            elif len(self.dataRawBytes) > offsetWithInfo - 0x1C:
+                self._readDictionary(offsetWithInfo)
+            else:
+                print '文件不包含字典数据'
+
         else:
-            print 'can not read dict file'
+            print '文件不包含字典数据'
 
-        self._buildDefinitionsArray()
+        # self._buildDefinitionsArray()
         self._deflateFile()
         self.rawFile.close()
 
@@ -105,10 +120,9 @@ class LingoesDictReader():
         self.indexing.dictType = self.getIntFromRaw(self.position)  # getint
 
         self.position += LENGTH_INT
-        self.indexing.withIndexOffset = self.getIntFromRaw(self.position)  # getint
 
         # 压缩数据的结束位置
-        self.indexing.limit = self.position + self.indexing.withIndexOffset
+        self.indexing.limit = self.getIntFromRaw(self.position) + startPosition + 8
 
         self.position += LENGTH_INT
 
@@ -168,14 +182,46 @@ class LingoesDictReader():
             _pos += LENGTH_INT
             self.deflateStreams.append(flatOffset)
 
-    def decompress(self):
+        print '索引词组数目：', self.indexing.definitions
+        print '索引地址/大小：0x%x' % self.indexing.offsetIndex, '/', self.indexing.offsetCompressDataHeader - self.indexing.offsetIndex, 'B'
+        print '压缩数据地址/大小：0x%x' % _pos, '/', self.indexing.limit - _pos, 'B'
+        print '词组索引地址/大小（解压后）：0x0 /', self.indexing.inflatWordsIndexLength, 'B'
+
+        print '词组地址/大小（解压后）：0x%x' % (self.indexing.inflatWordsIndexLength), \
+            '/', self.indexing.inflatWordsLength, 'B'
+
+        print 'XML地址/大小（解压后）：0x%x' % (self.indexing.inflatWordsIndexLength + \
+                                      self.indexing.inflatWordsLength), \
+            '/', self.indexing.inflatXmlLength, 'B'
+
+        print '文件大小（解压后）：', (self.indexing.inflatWordsIndexLength + \
+                             self.indexing.inflatWordsLength + \
+                             self.indexing.inflatXmlLength) / 1024, 'KB'
+
+        self.decompress(_pos)
+
+    def decompress(self, startPos):
         """解压"""
-        startOffset = self.position
+        startOffset = startPos
         offset = -1
         # 上一个数据块偏移地址
         lastOffset = startOffset
 
         # 以下是读取数据块，我想读入内存中
+        self.decompressedBuf = StringIO()
+        for offsetRelative in self.deflateStreams:
+            offset = startOffset + offsetRelative
+
+            target_bytes = array.array('B', self.dataRawBytes[lastOffset:offset])
+            dec_temp_buf = zlib.decompress(target_bytes)
+            dec_temp_buf = array.array('c', dec_temp_buf)
+            self.decompressedBuf.write(dec_temp_buf)
+            lastOffset = offset
+
+        print self.decompressedBuf.getvalue()
+
+        out_file = open('./out.txt', 'w')
+        out_file.write(self.decompressedBuf.getvalue())
 
     def _buildDefinitionsArray(self):
         for i in range(0, self.indexing.definitions):
@@ -184,6 +230,12 @@ class LingoesDictReader():
 
     def getIntFromRaw(self, pos):
         return struct.unpack('i', self.dataRawBytes[pos:pos + LENGTH_INT])[0]
+
+    def getShortFromRaw(self, pos):
+        return struct.unpack('h', self.dataRawBytes[pos:pos + LENGTH_SHORT])[0]
+
+    def getLongFromRaw(self, pos):
+        return struct.unpack('l', self.dataRawBytes[pos:pos + LENGTH_LONG])[0]
 
 
 class LingoesInflateDictReader():
@@ -253,4 +305,4 @@ if __name__ == '__main__':
     import os
 
     # LingoesDictReader(os.path.abspath('../../data/localDicts/Vicon English-Chinese(S) Dictionary.ld2'))
-    LingoesDictReader(os.path.abspath('../../data/localDicts/dict.ld2')).decompress()
+    LingoesDictReader(os.path.abspath('../../data/localDicts/dict.ld2'))
