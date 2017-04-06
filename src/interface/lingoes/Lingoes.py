@@ -8,9 +8,8 @@ except:
 import array
 import struct
 import zlib
-from StringIO import StringIO
-
 from enum import Enum
+from io import BytesIO
 
 from Bean import *
 
@@ -118,8 +117,6 @@ class LingoesDictReader():
         else:
             print '文件不包含字典数据'
 
-        # self._buildDefinitionsArray()
-        self._deflateFile()
         self.rawFile.close()
 
     def _readDictionary(self, startPosition):
@@ -156,6 +153,10 @@ class LingoesDictReader():
 
         self.position += LENGTH_INT
 
+        self.getInflateBuf()
+        self.extract(self.decompressedBuf.getvalue(), self.indexing.inflatWordsLength,
+                     self.indexing.inflatWordsIndexLength + self.indexing.inflatWordsLength)
+
     def _readHeader(self):
         self.header.type = struct.unpack('i', self.dataRawBytes[self.position:self.position + LENGTH_TYPE])[
             0]  # getType
@@ -181,7 +182,7 @@ class LingoesDictReader():
             0]  # getint
         self.position += (LENGTH_OFFSET + self.header.infoOffset)
 
-    def _deflateFile(self):
+    def getInflateBuf(self):
         self.position = (self.indexing.offsetCompressDataHeader + LENGTH_INT * 2)
         _pos = self.position
         flatOffset = self.getIntFromRaw(_pos)
@@ -209,6 +210,12 @@ class LingoesDictReader():
 
         self.decompress(_pos)
 
+        t_pos = self.indexing.offsetIndex
+        self.definitionsArray = [-1] * self.indexing.definitions
+        for i in range(0, self.indexing.definitions):
+            self.definitionsArray[i] = self.getIntFromRaw(t_pos)
+            t_pos += LENGTH_INT
+
     def decompress(self, startPos):
         """解压"""
         startOffset = startPos
@@ -217,19 +224,15 @@ class LingoesDictReader():
         lastOffset = startOffset
 
         # 以下是读取数据块，我想读入内存中
-        self.decompressedBuf = StringIO()
+        self.decompressedBuf = BytesIO()
         for offsetRelative in self.deflateStreams:
             offset = startOffset + offsetRelative
 
             target_bytes = array.array('B', self.dataRawBytes[lastOffset:offset])
             dec_temp_buf = zlib.decompress(target_bytes)
-            dec_temp_buf = array.array('c', dec_temp_buf)
+
             self.decompressedBuf.write(dec_temp_buf)
             lastOffset = offset
-
-        print len(self.decompressedBuf.getvalue())
-        out_file = open('./out.txt', 'w')
-        out_file.write(self.decompressedBuf.getvalue())
 
     def extract(self, inflatedBytes, offsetDefs, offsetXml):
         DICT_OFFSET_LENGTH = DictOffset.bytes()
@@ -274,19 +277,14 @@ class LingoesDictReader():
     def getInt(self, bytea, pos):
         return struct.unpack('i', bytea[pos:pos + LENGTH_INT])[0]
 
-    def dectectEncodings(self, byteBuf, offsetWords, offsetXml, defTotal,
-                         dataLen, idxData, defData, i):
-        if (defTotal < 10):
-            test = defTotal
-        else:
-            test = 10
-
+    def dectectEncodings(self, byteBuf, offsetWords, offsetXml,
+                         idxData, defData, i):
         for wordDec in Charset:
             for xmlDec in Charset:
 
                 try:
                     self.readDefinitionData(byteBuf, offsetWords, offsetXml, wordDec, xmlDec,
-                                            idxData, defData, test)
+                                            idxData, defData, 1)
                     print '词组编码：', wordDec
                     print 'xml编码：', xmlDec
                     return (wordDec, xmlDec)
@@ -305,21 +303,21 @@ class LingoesDictReader():
         currentWordOffset = idxData[4]
         currentXmlOffset = idxData[5]
 
-        xml = bytebuf[offsetXml + lastXmlPos, offsetXml + currentXmlOffset].decode(xmlDecoder)
+        xml = bytebuf[offsetXml + lastXmlPos:offsetXml + currentXmlOffset].decode(xmlDecoder.value)
         while refs > 0:
             ref = self.getInt(bytebuf, offsetWords + lastWordPos)
             idxData = self.getIdxData(bytebuf, DictOffset.bytes() * ref, idxData)
             lastXmlPos = idxData[0]
             currentXmlOffset = idxData[5]
             if xml == None or xml == '':
-                xml = bytebuf[offsetXml + lastXmlPos, offsetXml + currentXmlOffset].decode(xmlDecoder)
+                xml = bytebuf[offsetXml + lastXmlPos:offsetXml + currentXmlOffset].decode(xmlDecoder.value)
             else:
-                xml = bytebuf[offsetXml + lastXmlPos, offsetXml + currentXmlOffset].decode(xmlDecoder) + ',' + xml
+                xml = bytebuf[offsetXml + lastXmlPos: offsetXml + currentXmlOffset].decode(xmlDecoder.value) + ',' + xml
             lastWordPos += 4
             refs -= 1
 
         defData[1] = xml
-        word = bytebuf[offsetWords + lastWordPos, offsetWords + currentWordOffset].decode(wordDecoder)
+        word = bytebuf[(offsetWords + lastWordPos):(offsetWords + currentWordOffset)].decode(wordDecoder.value)
         defData[0] = word
 
     def getIdxData(self, bytebuf, pos, wordIdxData=[]):
@@ -327,13 +325,13 @@ class LingoesDictReader():
         pos += LENGTH_INT
         wordIdxData[1] = struct.unpack('i', bytebuf[pos:pos + LENGTH_INT])[0]
         pos += LENGTH_INT
-        wordIdxData[2] = bytebuf[pos] & 0xff
+        wordIdxData[2] = struct.unpack('b', bytebuf[pos])[0] & 0xff
         pos += 1
-        wordIdxData[3] = bytebuf[pos] & 0xff
+        wordIdxData[3] = struct.unpack('b', bytebuf[pos])[0] & 0xff
         pos += 1
         wordIdxData[4] = struct.unpack('i', bytebuf[pos:pos + LENGTH_INT])[0]
         pos += LENGTH_INT
-        wordIdxData[6] = struct.unpack('i', bytebuf[pos:pos + LENGTH_INT])[0]
+        wordIdxData[5] = struct.unpack('i', bytebuf[pos:pos + LENGTH_INT])[0]
 
         return wordIdxData
 
@@ -358,4 +356,4 @@ if __name__ == '__main__':
     import os
 
     # LingoesDictReader(os.path.abspath('../../data/localDicts/Vicon English-Chinese(S) Dictionary.ld2'))
-    LingoesDictReader(os.path.abspath('../../../data/localDicts/dict.ld2'))
+    LingoesDictReader(os.path.abspath('../../data/localDicts/dict.ld2'))
