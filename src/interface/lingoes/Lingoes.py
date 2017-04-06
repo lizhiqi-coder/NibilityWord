@@ -5,13 +5,14 @@ try:
 except:
     from PyQt4.QtCore import *
 
+import array
 import struct
 import zlib
+from StringIO import StringIO
+
+from enum import Enum
 
 from Bean import *
-from StringIO import StringIO
-import array
-from enum import Enum
 
 """
 读取二进制文件->读取头->读取索引->读取数据块(blocks)
@@ -230,16 +231,36 @@ class LingoesDictReader():
         out_file = open('./out.txt', 'w')
         out_file.write(self.decompressedBuf.getvalue())
 
-    def extract(self, indexFile, extractedWordsFile, extractedXmlFile, extractedOutputFile,
-                idxArray, offsetDefs, offsetXml):
+    def extract(self, inflatedBytes, offsetDefs, offsetXml):
+        DICT_OFFSET_LENGTH = DictOffset.bytes()
+        defTotal = offsetDefs / DICT_OFFSET_LENGTH - 1
 
-        dataLen = 10;
-        defTotal = offsetDefs / dataLen - 1
-        words = []  # defTotal
-        idxData = []  # 6
-        defData = []  # 2
+        totalWords = [''] * defTotal
+        wordsLen = [0] * defTotal
 
-        return
+        indexData = [-1] * 6
+        wordData = [''] * 2  # word,xml
+
+        encodings = self.dectectEncodings(inflatedBytes, offsetDefs, offsetXml, defTotal, indexData, wordData)
+
+        _pos = 8
+        counter = 0
+
+        # 两个变量不知道是干嘛的
+        fn, pn = 1, 0
+        dictOffset = DictOffset()
+
+        for i in range(0, defTotal):
+            # 向indexData和wordData中写入数据
+            self.readDefinitionData(inflatedBytes, offsetDefs, offsetXml, encodings[0], encodings[1], indexData,
+                                    wordData, i)
+            totalWords[i] = wordData[0]
+
+            dictOffset.xmlOffset = wordData[1]
+            wordsLen[i] = wordData[1].__len__()
+
+        print totalWords
+        print dictOffset.xmlOffset
 
     def getIntFromRaw(self, pos):
         return struct.unpack('i', self.dataRawBytes[pos:pos + LENGTH_INT])[0]
@@ -264,7 +285,7 @@ class LingoesDictReader():
             for xmlDec in Charset:
 
                 try:
-                    self.readDefinitionData(byteBuf, offsetWords, offsetXml, dataLen, wordDec, xmlDec,
+                    self.readDefinitionData(byteBuf, offsetWords, offsetXml, wordDec, xmlDec,
                                             idxData, defData, test)
                     print '词组编码：', wordDec
                     print 'xml编码：', xmlDec
@@ -274,9 +295,9 @@ class LingoesDictReader():
         print 'dectect encoding failed default is UTF-16LE'
         return (Charset.UTF_16LE, Charset.UTF_16LE)
 
-    def readDefinitionData(self, bytebuf, offsetWords, offsetXml, dataLen, wordDecoder, xmlDecoder,
+    def readDefinitionData(self, bytebuf, offsetWords, offsetXml, wordDecoder, xmlDecoder,
                            idxData, defData, i):
-        idxData = self.getIdxData(bytebuf, dataLen * i, idxData)
+        idxData = self.getIdxData(bytebuf, DictOffset.bytes() * i, idxData)
         lastWordPos = idxData[0]
         lastXmlPos = idxData[1]
         flags = idxData[2]
@@ -287,7 +308,7 @@ class LingoesDictReader():
         xml = bytebuf[offsetXml + lastXmlPos, offsetXml + currentXmlOffset].decode(xmlDecoder)
         while refs > 0:
             ref = self.getInt(bytebuf, offsetWords + lastWordPos)
-            idxData = self.getIdxData(bytebuf, dataLen * ref, idxData)
+            idxData = self.getIdxData(bytebuf, DictOffset.bytes() * ref, idxData)
             lastXmlPos = idxData[0]
             currentXmlOffset = idxData[5]
             if xml == None or xml == '':
@@ -300,7 +321,6 @@ class LingoesDictReader():
         defData[1] = xml
         word = bytebuf[offsetWords + lastWordPos, offsetWords + currentWordOffset].decode(wordDecoder)
         defData[0] = word
-        return defData
 
     def getIdxData(self, bytebuf, pos, wordIdxData=[]):
         wordIdxData[0] = struct.unpack('i', bytebuf[pos:pos + LENGTH_INT])[0]
@@ -338,4 +358,4 @@ if __name__ == '__main__':
     import os
 
     # LingoesDictReader(os.path.abspath('../../data/localDicts/Vicon English-Chinese(S) Dictionary.ld2'))
-    LingoesDictReader(os.path.abspath('../../data/localDicts/dict.ld2'))
+    LingoesDictReader(os.path.abspath('../../../data/localDicts/dict.ld2'))
