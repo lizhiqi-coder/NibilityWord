@@ -8,8 +8,9 @@ except:
 import array
 import struct
 import zlib
-from enum import Enum
 from io import BytesIO
+
+from enum import Enum
 
 from Bean import *
 
@@ -20,7 +21,7 @@ from Bean import *
 
 LENGTH_SHORT = 2
 LENGTH_INT = 4
-LENGTH_LONG = 8
+LENGTH_LONG = 4
 LENGTH_HEADER = 96
 LENGTH_TYPE = LENGTH_INT
 LENGTH_CHECKSUM = 20
@@ -75,6 +76,9 @@ class Charset(Enum):
     EUC_JP = 'EUC-JP'
 
 
+CHARSET_LSIT = (Charset.UTF_8, Charset.UTF_16LE, Charset.UTF_16BE, Charset.EUC_JP)
+
+
 class LingoesDictReader():
     def __init__(self, file_path):
         # 索引数组
@@ -85,13 +89,10 @@ class LingoesDictReader():
         self.rawFile = open(file_path, 'rb')
         self.dataRawBytes = bytearray(self.rawFile.read())
 
-        self.position = 0
-
         self.header = Header()
         self.indexing = Indexing()
 
         self._readHeader()
-        self.header.infoPosition = self.position
 
         print '文件：', file_path
         print 'type', self.dataRawBytes[0:4].decode()
@@ -120,71 +121,73 @@ class LingoesDictReader():
         self.rawFile.close()
 
     def _readDictionary(self, startPosition):
-        self.position = startPosition
-        self.indexing.offsetIndex = self.position + LENGTH_COMPRESS_HEADER
-        # todo
-        self.indexing.dictType = self.getIntFromRaw(self.position)  # getint
+        _pos = startPosition
+        self.indexing.offsetIndex = _pos + LENGTH_COMPRESS_HEADER
 
-        self.position += LENGTH_INT
+        self.indexing.dictType = self.getIntFromRaw(_pos)  # getint
+
+        _pos += LENGTH_INT
 
         # 压缩数据的结束位置
-        self.indexing.limit = self.getIntFromRaw(self.position) + startPosition + 8
+        self.indexing.limit = self.getIntFromRaw(_pos) + startPosition + 8
 
-        self.position += LENGTH_INT
+        _pos += LENGTH_INT
 
-        self.indexing.compressDataOffset = self.getIntFromRaw(self.position)  # getint
+        self.indexing.compressDataOffset = self.getIntFromRaw(_pos)  # getint
 
         self.indexing.definitions = self.indexing.compressDataOffset / LENGTH_INT
 
         self.indexing.offsetCompressDataHeader = self.indexing.compressDataOffset + self.indexing.offsetIndex
 
-        self.position += LENGTH_INT
+        _pos += LENGTH_INT
 
         # 索引单词长度
-        self.indexing.inflatWordsIndexLength = self.getIntFromRaw(self.position)  # getint
-        self.position += LENGTH_INT
+        self.indexing.inflatWordsIndexLength = self.getIntFromRaw(_pos)  # getint
+        _pos += LENGTH_INT
 
         # 单词数
-        self.indexing.inflatWordsLength = self.getIntFromRaw(self.position)  # getint
-        self.position += LENGTH_INT
+        self.indexing.inflatWordsLength = self.getIntFromRaw(_pos)  # getint
+        _pos += LENGTH_INT
 
         # xml数
-        self.indexing.inflatXmlLength = self.getIntFromRaw(self.position)  # getint
+        self.indexing.inflatXmlLength = self.getIntFromRaw(_pos)  # getint
 
-        self.position += LENGTH_INT
+        _pos += LENGTH_INT
 
         self.getInflateBuf()
         self.extract(self.decompressedBuf.getvalue(), self.indexing.inflatWordsLength,
                      self.indexing.inflatWordsIndexLength + self.indexing.inflatWordsLength)
 
     def _readHeader(self):
-        self.header.type = struct.unpack('i', self.dataRawBytes[self.position:self.position + LENGTH_TYPE])[
+        _pos = 0
+        self.header.type = struct.unpack('i', self.dataRawBytes[_pos:_pos + LENGTH_TYPE])[
             0]  # getType
-        self.position += LENGTH_TYPE
+        _pos += LENGTH_TYPE
 
-        self.header.checksum = self.dataRawBytes[self.position: self.position + LENGTH_CHECKSUM]  # getChecksum
-        self.position += LENGTH_CHECKSUM
+        self.header.checksum = self.dataRawBytes[_pos: _pos + LENGTH_CHECKSUM]  # getChecksum
+        _pos += LENGTH_CHECKSUM
 
-        self.header.majorVersion = self.dataRawBytes[self.position: self.position + LENGTH_MINOR_VERSION]  # getshort
-        self.position += LENGTH_MAJOR_VERSION
+        self.header.majorVersion = self.dataRawBytes[_pos: _pos + LENGTH_MINOR_VERSION]  # getshort
+        _pos += LENGTH_MAJOR_VERSION
 
-        self.header.minorVersion = self.dataRawBytes[self.position: self.position + LENGTH_MINOR_VERSION]  # getshort
-        self.position += LENGTH_MINOR_VERSION
+        self.header.minorVersion = self.dataRawBytes[_pos: _pos + LENGTH_MINOR_VERSION]  # getshort
+        _pos += LENGTH_MINOR_VERSION
 
-        self.header.id = self.dataRawBytes[self.position:self.position + LENGTH_ID]  # getlong
-        self.position += LENGTH_ID
+        self.header.id = self.dataRawBytes[_pos:_pos + LENGTH_ID]  # getlong
+        _pos += LENGTH_ID
 
-        paddingLength = LENGTH_HEADER - self.position - 4
-        self.header.padding = self.dataRawBytes[self.position: self.position + paddingLength]  # paddinglength
-        self.position += paddingLength
+        paddingLength = LENGTH_HEADER - _pos - 4
+        self.header.padding = self.dataRawBytes[_pos: _pos + paddingLength]  # paddinglength
+        _pos += paddingLength
 
-        self.header.infoOffset = struct.unpack('<i', self.dataRawBytes[self.position: self.position + LENGTH_INT])[
+        self.header.infoOffset = struct.unpack('<i', self.dataRawBytes[_pos: _pos + LENGTH_INT])[
             0]  # getint
-        self.position += (LENGTH_OFFSET + self.header.infoOffset)
+        _pos += (LENGTH_OFFSET + self.header.infoOffset)
+
+        self.header.infoPosition = _pos
 
     def getInflateBuf(self):
-        self.position = (self.indexing.offsetCompressDataHeader + LENGTH_INT * 2)
-        _pos = self.position
+        _pos = (self.indexing.offsetCompressDataHeader + LENGTH_INT * 2)
         flatOffset = self.getIntFromRaw(_pos)
         _pos += LENGTH_INT
         while (flatOffset + _pos) < self.indexing.limit:
@@ -279,8 +282,8 @@ class LingoesDictReader():
 
     def dectectEncodings(self, byteBuf, offsetWords, offsetXml,
                          idxData, defData, i):
-        for wordDec in Charset:
-            for xmlDec in Charset:
+        for wordDec in CHARSET_LSIT:
+            for xmlDec in CHARSET_LSIT:
 
                 try:
                     self.readDefinitionData(byteBuf, offsetWords, offsetXml, wordDec, xmlDec,
@@ -303,35 +306,39 @@ class LingoesDictReader():
         currentWordOffset = idxData[4]
         currentXmlOffset = idxData[5]
 
-        xml = bytebuf[offsetXml + lastXmlPos:offsetXml + currentXmlOffset].decode(xmlDecoder.value)
+        xml = bytebuf[offsetXml + lastXmlPos:offsetXml + currentXmlOffset].decode(xmlDecoder)
         while refs > 0:
             ref = self.getInt(bytebuf, offsetWords + lastWordPos)
             idxData = self.getIdxData(bytebuf, DictOffset.bytes() * ref, idxData)
             lastXmlPos = idxData[0]
             currentXmlOffset = idxData[5]
             if xml == None or xml == '':
-                xml = bytebuf[offsetXml + lastXmlPos:offsetXml + currentXmlOffset].decode(xmlDecoder.value)
+                xml = bytebuf[offsetXml + lastXmlPos:offsetXml + currentXmlOffset].decode(xmlDecoder)
             else:
-                xml = bytebuf[offsetXml + lastXmlPos: offsetXml + currentXmlOffset].decode(xmlDecoder.value) + ',' + xml
+                xml = bytebuf[offsetXml + lastXmlPos: offsetXml + currentXmlOffset].decode(xmlDecoder) + ',' + xml
             lastWordPos += 4
             refs -= 1
 
         defData[1] = xml
-        word = bytebuf[(offsetWords + lastWordPos):(offsetWords + currentWordOffset)].decode(wordDecoder.value)
+        word = bytebuf[(offsetWords + lastWordPos):(offsetWords + currentWordOffset)].decode(wordDecoder)
         defData[0] = word
 
     def getIdxData(self, bytebuf, pos, wordIdxData=[]):
-        wordIdxData[0] = struct.unpack('i', bytebuf[pos:pos + LENGTH_INT])[0]
-        pos += LENGTH_INT
-        wordIdxData[1] = struct.unpack('i', bytebuf[pos:pos + LENGTH_INT])[0]
-        pos += LENGTH_INT
-        wordIdxData[2] = struct.unpack('b', bytebuf[pos])[0] & 0xff
-        pos += 1
-        wordIdxData[3] = struct.unpack('b', bytebuf[pos])[0] & 0xff
-        pos += 1
-        wordIdxData[4] = struct.unpack('i', bytebuf[pos:pos + LENGTH_INT])[0]
-        pos += LENGTH_INT
-        wordIdxData[5] = struct.unpack('i', bytebuf[pos:pos + LENGTH_INT])[0]
+        # tepos = pos
+        try:
+            wordIdxData[0] = struct.unpack('i', bytebuf[pos:pos + LENGTH_INT])[0]
+            pos += LENGTH_INT
+            wordIdxData[1] = struct.unpack('i', bytebuf[pos:pos + LENGTH_INT])[0]
+            pos += LENGTH_INT
+            wordIdxData[2] = struct.unpack('b', bytebuf[pos])[0] & 0xff
+            pos += 1
+            wordIdxData[3] = struct.unpack('b', bytebuf[pos])[0] & 0xff
+            pos += 1
+            wordIdxData[4] = struct.unpack('i', bytebuf[pos:pos + LENGTH_INT])[0]
+            pos += LENGTH_INT
+            wordIdxData[5] = struct.unpack('i', bytebuf[pos:pos + LENGTH_INT])[0]
+        except:
+            print bytebuf[pos:pos + LENGTH_INT]
 
         return wordIdxData
 
