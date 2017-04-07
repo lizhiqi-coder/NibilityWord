@@ -243,6 +243,7 @@ class LingoesDictReader():
         defTotal = offsetDefs / DICT_OFFSET_LENGTH - 1
 
         totalWords = [''] * defTotal
+        totalXmls = [''] * defTotal
         wordsLen = [0] * defTotal
 
         indexData = [0] * 6
@@ -259,15 +260,18 @@ class LingoesDictReader():
 
         for i in range(0, defTotal):
             # 向indexData和wordData中写入数据
-            self.readDefinitionData(inflatedBytes, offsetDefs, offsetXml, encodings[0], encodings[1], indexData,
-                                    wordData, i)
-            totalWords[i] = wordData[0]
+            try:
+                self.readDefinitionData(inflatedBytes, offsetDefs, offsetXml, encodings[0], encodings[1], indexData,
+                                        wordData, i)
+                totalWords[i] = wordData[0]
 
-            dictOffset.xmlOffset = wordData[1]
-            wordsLen[i] = wordData[1].__len__()
+                totalXmls = wordData[1]
+                wordsLen[i] = wordData[1].__len__()
+            except Exception, e:
+                print i, 'Exception->', e
 
         print totalWords
-        print dictOffset.xmlOffset
+        print totalXmls
 
     def getIntFromRaw(self, pos):
         return struct.unpack('i', self.dataRawBytes[pos:pos + LENGTH_INT])[0]
@@ -294,7 +298,7 @@ class LingoesDictReader():
                 except:
                     pass
         print 'dectect encoding failed default is UTF-16LE'
-        return (UTF_8, UTF_8)
+        return (UTF_16LE, UTF_16LE)
 
     def readDefinitionData(self, bytebuf, offsetWords, offsetXml, wordDecoder, xmlDecoder,
                            idxData, defData, i):
@@ -312,14 +316,15 @@ class LingoesDictReader():
             idxData = self.getIdxData(bytebuf, DictOffset.bytes() * ref, idxData)
             lastXmlPos = idxData[0]
             currentXmlOffset = idxData[5]
+
             if xml == None or xml == '':
                 xml = bytebuf[offsetXml + lastXmlPos:offsetXml + currentXmlOffset].decode(xmlDecoder)
             else:
-                xml = bytebuf[offsetXml + lastXmlPos: offsetXml + currentXmlOffset].decode(xmlDecoder) + ',' + xml
+                xml = bytebuf[offsetXml + lastXmlPos:offsetXml + currentXmlOffset].decode(xmlDecoder) + ',' + xml
             lastWordPos += 4
             refs -= 1
 
-        defData[1] = xml
+        defData[1] = xml  # 原始xml数据，没有被修剪，包含一些标记语言标签
         word = bytebuf[(offsetWords + lastWordPos):(offsetWords + currentWordOffset)].decode(wordDecoder)
         defData[0] = word
 
