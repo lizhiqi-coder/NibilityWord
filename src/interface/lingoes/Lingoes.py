@@ -21,7 +21,13 @@ from Bean import *
 
 LENGTH_SHORT = 2
 LENGTH_INT = 4
-LENGTH_LONG = 4
+
+"""
+java: long->8 int ->4
+C: long long ->8 long->4 int ->4
+"""
+LENGTH_LONG = 8
+
 LENGTH_HEADER = 96
 LENGTH_TYPE = LENGTH_INT
 LENGTH_CHECKSUM = 20
@@ -275,7 +281,7 @@ class LingoesDictReader():
         return struct.unpack('h', self.dataRawBytes[pos:pos + LENGTH_SHORT])[0]
 
     def getLongFromRaw(self, pos):
-        return struct.unpack('l', self.dataRawBytes[pos:pos + LENGTH_LONG])[0]
+        return struct.unpack('q', self.dataRawBytes[pos:pos + LENGTH_LONG])[0]
 
     def getInt(self, bytea, pos):
         return struct.unpack('i', bytea[pos:pos + LENGTH_INT])[0]
@@ -325,20 +331,20 @@ class LingoesDictReader():
 
     def getIdxData(self, bytebuf, pos, wordIdxData=[]):
         # tepos = pos
-        try:
-            wordIdxData[0] = struct.unpack('i', bytebuf[pos:pos + LENGTH_INT])[0]
-            pos += LENGTH_INT
-            wordIdxData[1] = struct.unpack('i', bytebuf[pos:pos + LENGTH_INT])[0]
-            pos += LENGTH_INT
-            wordIdxData[2] = struct.unpack('b', bytebuf[pos])[0] & 0xff
-            pos += 1
-            wordIdxData[3] = struct.unpack('b', bytebuf[pos])[0] & 0xff
-            pos += 1
-            wordIdxData[4] = struct.unpack('i', bytebuf[pos:pos + LENGTH_INT])[0]
-            pos += LENGTH_INT
-            wordIdxData[5] = struct.unpack('i', bytebuf[pos:pos + LENGTH_INT])[0]
-        except:
-            print bytebuf[pos:pos + LENGTH_INT]
+        # try:
+        wordIdxData[0] = struct.unpack('i', bytebuf[pos:pos + LENGTH_INT])[0]
+        pos += LENGTH_INT
+        wordIdxData[1] = struct.unpack('i', bytebuf[pos:pos + LENGTH_INT])[0]
+        pos += LENGTH_INT
+        wordIdxData[2] = struct.unpack('b', bytebuf[pos])[0] & 0xff
+        pos += 1
+        wordIdxData[3] = struct.unpack('b', bytebuf[pos])[0] & 0xff
+        pos += 1
+        wordIdxData[4] = struct.unpack('i', bytebuf[pos:pos + LENGTH_INT])[0]
+        pos += LENGTH_INT
+        wordIdxData[5] = struct.unpack('i', bytebuf[pos:pos + LENGTH_INT])[0]
+        # except:
+        # print bytebuf[pos:pos + LENGTH_INT]
 
         return wordIdxData
 
