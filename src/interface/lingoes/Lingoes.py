@@ -10,8 +10,6 @@ import struct
 import zlib
 from io import BytesIO
 
-from enum import Enum
-
 from Bean import *
 
 """
@@ -36,6 +34,13 @@ LENGTH_MINOR_VERSION = LENGTH_SHORT
 LENGTH_ID = LENGTH_LONG
 LENGTH_OFFSET = LENGTH_INT
 LENGTH_COMPRESS_HEADER = LENGTH_INT * 7
+
+UTF_8 = 'UTF-8'
+UTF_16LE = 'UTF-16LE'
+UTF_16BE = 'UTF-16BE'
+EUC_JP = 'EUC-JP'
+
+CHARSET_LSIT = (UTF_8, UTF_16LE, UTF_16BE, EUC_JP)
 
 
 class Header():
@@ -73,16 +78,6 @@ class Indexing():
         self.inflatWordsLength = -1
         self.inflatXmlLength = -1
         self.offsetIndex = -1  # 单词索引的开始位置
-
-
-class Charset(Enum):
-    UTF_8 = 'UTF-8'
-    UTF_16LE = 'UTF-16LE'
-    UTF_16BE = 'UTF-16BE'
-    EUC_JP = 'EUC-JP'
-
-
-CHARSET_LSIT = (Charset.UTF_8, Charset.UTF_16LE, Charset.UTF_16BE, Charset.EUC_JP)
 
 
 class LingoesDictReader():
@@ -161,7 +156,7 @@ class LingoesDictReader():
         _pos += LENGTH_INT
 
         self.getInflateBuf()
-        self.extract(self.decompressedBuf.getvalue(), self.indexing.inflatWordsLength,
+        self.extract(self.decompressedBuf.getvalue(), self.indexing.inflatWordsIndexLength,
                      self.indexing.inflatWordsIndexLength + self.indexing.inflatWordsLength)
 
     def _readHeader(self):
@@ -250,10 +245,10 @@ class LingoesDictReader():
         totalWords = [''] * defTotal
         wordsLen = [0] * defTotal
 
-        indexData = [-1] * 6
+        indexData = [0] * 6
         wordData = [''] * 2  # word,xml
 
-        encodings = self.dectectEncodings(inflatedBytes, offsetDefs, offsetXml, defTotal, indexData, wordData)
+        encodings = self.dectectEncodings(inflatedBytes, offsetDefs, offsetXml, indexData, wordData)
 
         _pos = 8
         counter = 0
@@ -286,21 +281,20 @@ class LingoesDictReader():
     def getInt(self, bytea, pos):
         return struct.unpack('i', bytea[pos:pos + LENGTH_INT])[0]
 
-    def dectectEncodings(self, byteBuf, offsetWords, offsetXml,
-                         idxData, defData, i):
+    def dectectEncodings(self, byteBuf, offsetWords, offsetXml, idxData, defData):
         for wordDec in CHARSET_LSIT:
             for xmlDec in CHARSET_LSIT:
 
                 try:
                     self.readDefinitionData(byteBuf, offsetWords, offsetXml, wordDec, xmlDec,
-                                            idxData, defData, 1)
+                                            idxData, defData, 10)
                     print '词组编码：', wordDec
                     print 'xml编码：', xmlDec
                     return (wordDec, xmlDec)
                 except:
                     pass
         print 'dectect encoding failed default is UTF-16LE'
-        return (Charset.UTF_16LE, Charset.UTF_16LE)
+        return (UTF_8, UTF_8)
 
     def readDefinitionData(self, bytebuf, offsetWords, offsetXml, wordDecoder, xmlDecoder,
                            idxData, defData, i):
