@@ -7,6 +7,7 @@ except:
 
 import array
 import struct
+import sys
 import zlib
 from io import BytesIO
 
@@ -242,6 +243,7 @@ class LingoesDictReader():
         DICT_OFFSET_LENGTH = DictOffset.bytes()
         defTotal = offsetDefs / DICT_OFFSET_LENGTH - 1
 
+        print 'def total is -> ', defTotal
         totalWords = [''] * defTotal
         totalXmls = [''] * defTotal
         wordsLen = [0] * defTotal
@@ -259,19 +261,23 @@ class LingoesDictReader():
         dictOffset = DictOffset()
 
         for i in range(0, defTotal):
+            sys.stdout.write('\rcomplete precent :%.0f %%' % ((i * 100.0) / defTotal))
+            sys.stdout.flush()
             # 向indexData和wordData中写入数据
             try:
                 indexData, wordData = self.readDefinitionData(inflatedBytes, offsetDefs, offsetXml, encodings[0],
                                                               encodings[1], i)
                 totalWords[i] = wordData[0]
 
-                totalXmls = wordData[1]
+                # totalXmls[i] = wordData[1]
                 wordsLen[i] = wordData[1].__len__()
+                counter += 1
             except Exception, e:
-                print i, 'Exception->', e
+                print '\n', i, 'Exception->', e
 
         print totalWords
-        print totalXmls
+        # print totalXmls
+        print '成功读出%d组数据。' % counter
 
     def getIntFromRaw(self, pos):
         return struct.unpack('i', self.dataRawBytes[pos:pos + LENGTH_INT])[0]
