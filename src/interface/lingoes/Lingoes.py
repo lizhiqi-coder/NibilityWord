@@ -249,7 +249,7 @@ class LingoesDictReader():
         indexData = [0] * 6
         wordData = [''] * 2  # word,xml
 
-        encodings = self.dectectEncodings(inflatedBytes, offsetDefs, offsetXml, indexData, wordData)
+        encodings = self.dectectEncodings(inflatedBytes, offsetDefs, offsetXml)
 
         _pos = 8
         counter = 0
@@ -261,8 +261,8 @@ class LingoesDictReader():
         for i in range(0, defTotal):
             # 向indexData和wordData中写入数据
             try:
-                self.readDefinitionData(inflatedBytes, offsetDefs, offsetXml, encodings[0], encodings[1], indexData,
-                                        wordData, i)
+                indexData, wordData = self.readDefinitionData(inflatedBytes, offsetDefs, offsetXml, encodings[0],
+                                                              encodings[1], i)
                 totalWords[i] = wordData[0]
 
                 totalXmls = wordData[1]
@@ -285,13 +285,15 @@ class LingoesDictReader():
     def getInt(self, bytea, pos):
         return struct.unpack('i', bytea[pos:pos + LENGTH_INT])[0]
 
-    def dectectEncodings(self, byteBuf, offsetWords, offsetXml, idxData, defData):
+    def dectectEncodings(self, byteBuf, offsetWords, offsetXml):
+        _indexData = [0] * 6
+        _wordData = [''] * 2  # word,xml
+
         for wordDec in CHARSET_LSIT:
             for xmlDec in CHARSET_LSIT:
 
                 try:
-                    self.readDefinitionData(byteBuf, offsetWords, offsetXml, wordDec, xmlDec,
-                                            idxData, defData, 10)
+                    self.readDefinitionData(byteBuf, offsetWords, offsetXml, wordDec, xmlDec, 10)
                     print '词组编码：', wordDec
                     print 'xml编码：', xmlDec
                     return (wordDec, xmlDec)
@@ -300,9 +302,9 @@ class LingoesDictReader():
         print 'dectect encoding failed default is UTF-16LE'
         return (UTF_16LE, UTF_16LE)
 
-    def readDefinitionData(self, bytebuf, offsetWords, offsetXml, wordDecoder, xmlDecoder,
-                           idxData, defData, i):
-        idxData = self.getIdxData(bytebuf, DictOffset.bytes() * i, idxData)
+    def readDefinitionData(self, bytebuf, offsetWords, offsetXml, wordDecoder, xmlDecoder, i):
+        idxData = self.getIdxData(bytebuf, DictOffset.bytes() * i)  # size=6
+        defData = [''] * 2
         lastWordPos = idxData[0]
         lastXmlPos = idxData[1]
         flags = idxData[2]
@@ -313,7 +315,7 @@ class LingoesDictReader():
         xml = bytebuf[offsetXml + lastXmlPos:offsetXml + currentXmlOffset].decode(xmlDecoder)
         while refs > 0:
             ref = self.getInt(bytebuf, offsetWords + lastWordPos)
-            idxData = self.getIdxData(bytebuf, DictOffset.bytes() * ref, idxData)
+            idxData = self.getIdxData(bytebuf, DictOffset.bytes() * ref)
             lastXmlPos = idxData[0]
             currentXmlOffset = idxData[5]
 
@@ -328,9 +330,12 @@ class LingoesDictReader():
         word = bytebuf[(offsetWords + lastWordPos):(offsetWords + currentWordOffset)].decode(wordDecoder)
         defData[0] = word
 
-    def getIdxData(self, bytebuf, pos, wordIdxData=[]):
+        return idxData, defData
+
+    def getIdxData(self, bytebuf, pos):
         # tepos = pos
         # try:
+        wordIdxData = [0] * 6
         wordIdxData[0] = struct.unpack('i', bytebuf[pos:pos + LENGTH_INT])[0]
         pos += LENGTH_INT
         wordIdxData[1] = struct.unpack('i', bytebuf[pos:pos + LENGTH_INT])[0]
