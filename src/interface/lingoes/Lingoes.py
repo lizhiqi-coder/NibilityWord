@@ -182,7 +182,7 @@ class LingoesDictReader():
         self.header.padding = self.dataRawBytes[_pos: _pos + paddingLength]  # paddinglength
         _pos += paddingLength
 
-        self.header.infoOffset = struct.unpack('<i', self.dataRawBytes[_pos: _pos + LENGTH_INT])[
+        self.header.infoOffset = struct.unpack('i', self.dataRawBytes[_pos: _pos + LENGTH_INT])[
             0]  # getint
         _pos += (LENGTH_OFFSET + self.header.infoOffset)
 
@@ -243,7 +243,6 @@ class LingoesDictReader():
         DICT_OFFSET_LENGTH = DictOffset.bytes()
         defTotal = offsetDefs / DICT_OFFSET_LENGTH - 1
 
-        print 'def total is -> ', defTotal
         totalWords = [''] * defTotal
         totalXmls = [''] * defTotal
         wordsLen = [0] * defTotal
@@ -273,11 +272,11 @@ class LingoesDictReader():
                 wordsLen[i] = wordData[1].__len__()
                 counter += 1
             except Exception, e:
-                print '\n', i, 'Exception->', e
+                print i, 'Exception->', e
 
         print totalWords
-        # print totalXmls
-        print '成功读出%d组数据。' % counter
+        print totalXmls
+        print '成功读取 %d 组数据' % counter
 
     def getIntFromRaw(self, pos):
         return struct.unpack('i', self.dataRawBytes[pos:pos + LENGTH_INT])[0]
@@ -292,8 +291,6 @@ class LingoesDictReader():
         return struct.unpack('i', bytea[pos:pos + LENGTH_INT])[0]
 
     def dectectEncodings(self, byteBuf, offsetWords, offsetXml):
-        _indexData = [0] * 6
-        _wordData = [''] * 2  # word,xml
 
         for wordDec in CHARSET_LSIT:
             for xmlDec in CHARSET_LSIT:
@@ -322,7 +319,7 @@ class LingoesDictReader():
         while refs > 0:
             ref = self.getInt(bytebuf, offsetWords + lastWordPos)
             idxData = self.getIdxData(bytebuf, DictOffset.bytes() * ref)
-            lastXmlPos = idxData[0]
+            lastXmlPos = idxData[1]
             currentXmlOffset = idxData[5]
 
             if xml == None or xml == '':
@@ -339,8 +336,7 @@ class LingoesDictReader():
         return idxData, defData
 
     def getIdxData(self, bytebuf, pos):
-        # tepos = pos
-        # try:
+
         wordIdxData = [0] * 6
         wordIdxData[0] = struct.unpack('i', bytebuf[pos:pos + LENGTH_INT])[0]
         pos += LENGTH_INT
@@ -353,8 +349,6 @@ class LingoesDictReader():
         wordIdxData[4] = struct.unpack('i', bytebuf[pos:pos + LENGTH_INT])[0]
         pos += LENGTH_INT
         wordIdxData[5] = struct.unpack('i', bytebuf[pos:pos + LENGTH_INT])[0]
-        # except:
-        # print bytebuf[pos:pos + LENGTH_INT]
 
         return wordIdxData
 
