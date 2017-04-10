@@ -181,7 +181,7 @@ class LingoesDictReader():
         self.header.padding = self.dataRawBytes[_pos: _pos + paddingLength]  # paddinglength
         _pos += paddingLength
 
-        self.header.infoOffset = struct.unpack('<i', self.dataRawBytes[_pos: _pos + LENGTH_INT])[
+        self.header.infoOffset = struct.unpack('i', self.dataRawBytes[_pos: _pos + LENGTH_INT])[
             0]  # getint
         _pos += (LENGTH_OFFSET + self.header.infoOffset)
 
