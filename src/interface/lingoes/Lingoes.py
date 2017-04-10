@@ -7,7 +7,6 @@ except:
 
 import array
 import struct
-import sys
 import zlib
 from io import BytesIO
 
@@ -255,8 +254,8 @@ class LingoesDictReader():
         counter = 0
 
         for i in range(0, defTotal):
-            sys.stdout.write('\rcomplete precent :%.0f %%' % ((i * 100.0) / defTotal))
-            sys.stdout.flush()
+            # sys.stdout.write('\rcomplete precent :%.0f %%' % ((i * 100.0) / defTotal))
+            # sys.stdout.flush()
             # 向indexData和wordData中写入数据
             try:
                 indexData, wordData = self.readDefinitionData(inflatedBytes, offsetDefs, offsetXml, encodings[0],
@@ -265,11 +264,13 @@ class LingoesDictReader():
 
                 totalXmls[i] = wordData[1]
                 wordsLen[i] = wordData[1].__len__()
+                print wordData[0], '=', wordData[1]
                 counter += 1
             except Exception, e:
                 print i, 'Exception->', e
 
-        print '\n',totalWords
+        print '\n'
+        # print totalWords
         # print totalXmls
         print '成功读取 %d 组数据' % counter
 
@@ -348,24 +349,8 @@ class LingoesDictReader():
         return wordIdxData
 
 
-class SensitiveStringDecoder():
-    def __int__(self, decoder, name):
-        self.name = ''
-        self.charsetDecoder = decoder
-        self.name = name
-
-    def decode(self, ba, off, len):
-        return
-
-    def safeTrim(self, ca, len):
-        if len == len(ca):
-            return ca;
-        else:
-            return ca[:len]
-
-
 if __name__ == '__main__':
     import os
 
-    # LingoesDictReader(os.path.abspath('../../data/localDicts/Vicon English-Chinese(S) Dictionary.ld2'))
-    LingoesDictReader(os.path.abspath('../../data/localDicts/dict.ld2'))
+    LingoesDictReader(os.path.abspath('../../data/localDicts/Vicon English-Chinese(S) Dictionary.ld2'))
+    # LingoesDictReader(os.path.abspath('../../data/localDicts/dict.ld2'))
