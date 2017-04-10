@@ -224,7 +224,6 @@ class LingoesDictReader():
     def decompress(self, startPos):
         """解压"""
         startOffset = startPos
-        offset = -1
         # 上一个数据块偏移地址
         lastOffset = startOffset
 
@@ -255,10 +254,6 @@ class LingoesDictReader():
         _pos = 8
         counter = 0
 
-        # 两个变量不知道是干嘛的
-        fn, pn = 1, 0
-        dictOffset = DictOffset()
-
         for i in range(0, defTotal):
             sys.stdout.write('\rcomplete precent :%.0f %%' % ((i * 100.0) / defTotal))
             sys.stdout.flush()
@@ -268,14 +263,14 @@ class LingoesDictReader():
                                                               encodings[1], i)
                 totalWords[i] = wordData[0]
 
-                # totalXmls[i] = wordData[1]
+                totalXmls[i] = wordData[1]
                 wordsLen[i] = wordData[1].__len__()
                 counter += 1
             except Exception, e:
                 print i, 'Exception->', e
 
-        print totalWords
-        print totalXmls
+        print '\n',totalWords
+        # print totalXmls
         print '成功读取 %d 组数据' % counter
 
     def getIntFromRaw(self, pos):
