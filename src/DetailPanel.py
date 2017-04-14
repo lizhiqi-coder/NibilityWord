@@ -122,6 +122,9 @@ class DetailPanel(QWidget):
             explains = []
         else:
             explains = {}
+            if result.explains == None or len(result.explains) == 0:
+                explains[u'解释:'] = ''.join(result.translation)
+
         for item in result.explains:
 
             split = item.split('.')
