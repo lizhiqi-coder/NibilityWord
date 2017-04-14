@@ -33,3 +33,12 @@ class DetailModel:
         self.word_name = word_name
         self.exchange = exchange
         self.symbols = symbols  # list
+
+
+class DictResult():
+    def __init__(self, query, translation, phones, explains, web=None):
+        self.query = query
+        self.translation = translation
+        self.phones = phones
+        self.explains = explains
+        self.web = web

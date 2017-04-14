@@ -3,6 +3,8 @@
 import httplib2
 import json
 
+from src.model.DetailModel import DictResult
+
 ghost = 'http://fanyi.youdao.com/openapi.do'
 gkey = '2002774412'
 gkeyfrom = 'niubility-word'
@@ -17,6 +19,7 @@ NO_RESULT = 60
 
 
 def translate(question, type='json'):
+    question = question.encode('utf-8')
     global ghost
     myUrl = ghost
     myUrl += '?keyfrom=' + gkeyfrom \
@@ -32,6 +35,7 @@ def translate(question, type='json'):
         json_data = json.loads(content)
         if json_data['errorCode'] == OK:
             result = _parseJson(json_data)
+            print result
             return result
         else:
             return json_data['errorCode']
@@ -44,11 +48,12 @@ def _parseJson(json_data):
     query = json_data['query']
     translation = json_data['translation']
     phones = {}
-    phones['phonetic'] = json_data['phonetic']
-    phones['uk'] = json_data['uk-phonetic']
-    phones['us'] = json_data['us-phonetic']
+    basic = json_data['basic']
+    phones['phonetic'] = (basic['phonetic'], None)
+    phones['uk'] = (basic['uk-phonetic'], None)
+    phones['us'] = (basic['us-phonetic'], None)
 
-    explains = json_data['explains']  # 列表
+    explains = basic['explains']  # 列表
     web = {}
     for item in json_data['web']:
         key = item['key']
@@ -58,14 +63,5 @@ def _parseJson(json_data):
     return DictResult(query, translation, phones, explains, web)
 
 
-class DictResult():
-    def __init__(self, query, translation, phones, explains, web=None):
-        self.query = query
-        self.translation = translation
-        self.phones = phones
-        self.explains = explains
-        self.web = web
-
-
 if __name__ == '__main__':
-    translate(u'invalid')
+    translate('invalid')

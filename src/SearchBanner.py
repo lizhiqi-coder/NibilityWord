@@ -8,12 +8,11 @@ except ImportError:
     from PyQt4.QtCore import *
     from PyQt4.QtGui import *
 
-from interface import IPowerWord
+from interface import IYoudao
 from DetailPanel import DetailPanel
 from IndexListPanel import IndexListPanel
 from res import R
 from utils import NBUtils
-from interface.lingoes.Lingoes import Lingoes
 
 
 class SearchBanner(QWidget):
@@ -99,7 +98,7 @@ class SearchBanner(QWidget):
         result = None
         try:
             key_word = self.text_edit.text()
-            result = IPowerWord.translate(key_word)
+            result = IYoudao.translate(key_word)
             self.index_list_panel.hide()
         except:
             print 'onSearch except'
@@ -128,14 +127,14 @@ class SearchBanner(QWidget):
         self.index_list_panel.initTransfrom(self.width() - 30, 200)
         self.index_list_panel.hide()
         self.root_layout.addWidget(self.index_list_panel)
-        self.local_dict = Lingoes('dict_name')
+        # self.local_dict = Lingoes('dict_name')
 
     def __onInputChanged(self):
         self.detail_panel.hide()
         if self.text_edit.text() != '':
             self.index_list_panel.show()
             self.btn_clear.show()
-            entry = self.local_dict.getFastEntry(self.text_edit.text())
+            # entry = self.local_dict.getFastEntry(self.text_edit.text())
             # self.index_list_panel.setData(entry)
 
 

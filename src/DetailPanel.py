@@ -12,7 +12,7 @@ import sys
 from BuddyListWidget import BuddyListWidget
 from res import R
 from utils import NBUtils
-from utils.MediaUtils import MediaLoader, MediaConfig
+from utils.MediaUtils import MediaLoader
 
 
 class DetailPanel(QWidget):
@@ -79,22 +79,49 @@ class DetailPanel(QWidget):
         self.root_layout.addWidget(self.meaning_list_bar)
         # self.root_layout.addWidget(self.other_bar)
 
+    # def display(self, result):
+    #     self.head_name.setText(result.word_name)
+    #     for symbol in result.symbols:
+    #         self.ph_item.show(title=u'英', ph_symbol=symbol.ph['ph_en'][0],
+    #                           sound=symbol.ph['ph_en'][1])
+    #         self.ph_item2.show(title=u'美', ph_symbol=symbol.ph['ph_am'][0],
+    #                            sound=symbol.ph['ph_am'][1])
+    #
+    #         meaning_dict = {}
+    #         for key in symbol.part_means:
+    #             meaning = ''
+    #             for i in symbol.part_means[key]:
+    #                 meaning += (i + ';')
+    #             meaning_dict[key] = meaning
+    #
+    #         self.meaning_list_bar.setData(meaning_dict)
+
     def display(self, result):
-        self.head_name.setText(result.word_name)
-        for symbol in result.symbols:
-            self.ph_item.show(title=u'英', ph_symbol=symbol.ph['ph_en'][0],
-                              sound=symbol.ph['ph_en'][1])
-            self.ph_item2.show(title=u'美', ph_symbol=symbol.ph['ph_am'][0],
-                               sound=symbol.ph['ph_am'][1])
+        self.head_name.setText(result.query)
+        if len(result.phones) == 1:
+            self.ph_item.show(title=u'发音',
+                              ph_symbol=result.phones['phonetic'][0],
+                              sound=result.phones['phonetic'][1])
+        else:
+            self.ph_item.show(title=u'英',
+                              ph_symbol=result.phones['uk'][0],
+                              sound=result.phones['uk'][1])
+            self.ph_item2.show(title=u'美',
+                               ph_symbol=result.phones['us'][0],
+                               sound=result.phones['us'][1])
 
-            meaning_dict = {}
-            for key in symbol.part_means:
-                meaning = ''
-                for i in symbol.part_means[key]:
-                    meaning += (i + ';')
-                meaning_dict[key] = meaning
+        meaning_dict = {}
+        for item in result.explains:
+            split = item.split('.')
+            if len(split) > 1:
+                first = split[0] + '.'
+                second = split[1]
+            else:
+                first = ''
+                second = item
+            meaning_dict[first] = second
 
-            self.meaning_list_bar.setData(meaning_dict)
+        self.meaning_list_bar.setData(meaning_dict)
 
 
 # -------------------------------------------------------------------#
