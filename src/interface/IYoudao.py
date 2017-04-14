@@ -35,13 +35,12 @@ def translate(question, type='json'):
         json_data = json.loads(content)
         if json_data['errorCode'] == OK:
             result = _parseJson(json_data)
-            print result
             return result
         else:
             return json_data['errorCode']
 
     except Exception, e:
-        print e
+        print 'youdao exception', e
 
 
 def _parseJson(json_data):
@@ -49,9 +48,12 @@ def _parseJson(json_data):
     translation = json_data['translation']
     phones = {}
     basic = json_data['basic']
-    phones['phonetic'] = (basic['phonetic'], None)
-    phones['uk'] = (basic['uk-phonetic'], None)
-    phones['us'] = (basic['us-phonetic'], None)
+    try:
+        phones['phonetic'] = (basic['phonetic'], None)
+        phones['uk'] = (basic['uk-phonetic'], None)
+        phones['us'] = (basic['us-phonetic'], None)
+    except Exception, e:
+        print 'youdao json exception ', e
 
     explains = basic['explains']  # 列表
     web = {}

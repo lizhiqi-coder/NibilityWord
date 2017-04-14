@@ -97,18 +97,21 @@ class DetailPanel(QWidget):
     #         self.meaning_list_bar.setData(meaning_dict)
 
     def display(self, result):
+        self.clear()
         self.head_name.setText(result.query)
-        if len(result.phones) == 1:
-            self.ph_item.show(title=u'发音',
-                              ph_symbol=result.phones['phonetic'][0],
-                              sound=result.phones['phonetic'][1])
-        else:
-            self.ph_item.show(title=u'英',
-                              ph_symbol=result.phones['uk'][0],
-                              sound=result.phones['uk'][1])
-            self.ph_item2.show(title=u'美',
-                               ph_symbol=result.phones['us'][0],
-                               sound=result.phones['us'][1])
+        if result.phones != None and len(result.phones) > 0:
+
+            if len(result.phones) == 1:
+                self.ph_item.show(title=u'发音',
+                                  ph_symbol=result.phones['phonetic'][0],
+                                  sound=result.phones['phonetic'][1])
+            else:
+                self.ph_item.show(title=u'英',
+                                  ph_symbol=result.phones['uk'][0],
+                                  sound=result.phones['uk'][1])
+                self.ph_item2.show(title=u'美',
+                                   ph_symbol=result.phones['us'][0],
+                                   sound=result.phones['us'][1])
 
         meaning_dict = {}
         for item in result.explains:
@@ -122,6 +125,12 @@ class DetailPanel(QWidget):
             meaning_dict[first] = second
 
         self.meaning_list_bar.setData(meaning_dict)
+
+    def clear(self):
+        self.head_name.setText('')
+        self.ph_item.hide()
+        self.ph_item2.hide()
+        self.meaning_list_bar.setData({})
 
 
 # -------------------------------------------------------------------#
