@@ -100,8 +100,8 @@ class SearchBanner(QWidget):
             key_word = self.text_edit.text()
             result = IYoudao.translate(key_word)
             self.index_list_panel.hide()
-        except:
-            print 'onSearch except'
+        except Exception, e:
+            print 'onSearch except', e
         if result != None:
             self.detail_panel.show()
             self.detail_panel.display(result=result)

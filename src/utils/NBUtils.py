@@ -26,3 +26,11 @@ def getPlatform():
         return PLATFROM_WINDOWS
     else:
         PLATFROM_LINUX
+
+
+def containsChinese(str):
+    for ch in str:
+        if u'\u4e00' <= ch <= u'\u9fff':
+            return True
+
+    return False

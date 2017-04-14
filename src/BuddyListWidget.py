@@ -16,13 +16,20 @@ class BuddyListWidget(QListWidget):
     def _initUI(self):
         pass
 
-    def setData(self, dict={}):
+    def setData(self, explains):
         self.clear()
-        for key in dict:
-            m_item = BuddyListWidget.BuddyListItem(key, dict[key])
-            item = QListWidgetItem()
-            self.addItem(item)
-            self.setItemWidget(item, m_item)
+        if isinstance(explains, dict):
+            for key in explains:
+                m_item = BuddyListWidget.BuddyListItem(key, explains[key])
+                item = QListWidgetItem()
+                self.addItem(item)
+                self.setItemWidget(item, m_item)
+        elif isinstance(explains, list):
+            for i in range(len(explains)):
+                m_item = BuddyListWidget.BuddyListItem(str(i + 1) + '.', explains[i])
+                item = QListWidgetItem()
+                self.addItem(item)
+                self.setItemWidget(item, m_item)
 
     class BuddyListItem(QWidget):
         def __init__(self, key=None, value=None):

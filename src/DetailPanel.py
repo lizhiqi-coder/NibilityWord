@@ -98,33 +98,43 @@ class DetailPanel(QWidget):
 
     def display(self, result):
         self.clear()
-        self.head_name.setText(result.query)
+        cn_to_en = NBUtils.containsChinese(result.query)
+        if cn_to_en:
+            self.head_name.setText(''.join(result.translation))
+        else:
+            self.head_name.setText(result.query)
+
         if result.phones != None and len(result.phones) > 0:
 
             if len(result.phones) == 1:
-                self.ph_item.show(title=u'发音',
-                                  ph_symbol=result.phones['phonetic'][0],
-                                  sound=result.phones['phonetic'][1])
+                self.ph_item.setData(title=u'发音',
+                                     ph_symbol=result.phones['phonetic'][0],
+                                     sound=result.phones['phonetic'][1])
             else:
-                self.ph_item.show(title=u'英',
-                                  ph_symbol=result.phones['uk'][0],
-                                  sound=result.phones['uk'][1])
-                self.ph_item2.show(title=u'美',
-                                   ph_symbol=result.phones['us'][0],
-                                   sound=result.phones['us'][1])
+                self.ph_item.setData(title=u'英',
+                                     ph_symbol=result.phones['uk'][0],
+                                     sound=result.phones['uk'][1])
+                self.ph_item2.setData(title=u'美',
+                                      ph_symbol=result.phones['us'][0],
+                                      sound=result.phones['us'][1])
 
-        meaning_dict = {}
+        if cn_to_en:
+            explains = []
+        else:
+            explains = {}
         for item in result.explains:
+
             split = item.split('.')
-            if len(split) > 1:
+            if len(split) > 1 and not cn_to_en:
                 first = split[0] + '.'
                 second = split[1]
-            else:
-                first = ''
-                second = item
-            meaning_dict[first] = second
+                explains[first] = second
+            elif not cn_to_en:
+                explains[u'解释:'] = item
+            elif cn_to_en:
+                explains.append(item)
 
-        self.meaning_list_bar.setData(meaning_dict)
+        self.meaning_list_bar.setData(explains)
 
     def clear(self):
         self.head_name.setText('')
@@ -157,7 +167,7 @@ class PhItem(QFrame):
         ph_item_layout.addWidget(self.btn_sound)
         self.btn_sound.clicked.connect(self._onDisplaySound)
 
-    def show(self, title=None, ph_symbol=None, sound=None):
+    def setData(self, title=None, ph_symbol=None, sound=None):
         self.title = title
         self.ph_symbol = '[' + ph_symbol + ']'
         if sound == None or sound == "":
@@ -167,6 +177,7 @@ class PhItem(QFrame):
             self.btn_sound.show()
         self.lb_title.setText(self.title)
         self.lb_ph_symbol.setText(self.ph_symbol)
+        self.show()
 
     def _onDisplaySound(self):
         print 'display sound'

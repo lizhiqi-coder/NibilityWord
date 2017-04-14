@@ -19,7 +19,7 @@ NO_RESULT = 60
 
 
 def translate(question, type='json'):
-    question = question.encode('utf-8')
+    # question = question.encode('utf-8')
     global ghost
     myUrl = ghost
     myUrl += '?keyfrom=' + gkeyfrom \
@@ -46,21 +46,26 @@ def translate(question, type='json'):
 def _parseJson(json_data):
     query = json_data['query']
     translation = json_data['translation']
+
     phones = {}
-    basic = json_data['basic']
+    explains = []
+    web = {}
+
     try:
+        basic = json_data['basic']
+        explains = basic['explains']  # 列表
+
+        for item in json_data['web']:
+            key = item['key']
+            value = item['value']
+            web[key] = value
+
         phones['phonetic'] = (basic['phonetic'], None)
         phones['uk'] = (basic['uk-phonetic'], None)
         phones['us'] = (basic['us-phonetic'], None)
+
     except Exception, e:
         print 'youdao json exception ', e
-
-    explains = basic['explains']  # 列表
-    web = {}
-    for item in json_data['web']:
-        key = item['key']
-        value = item['value']
-        web[key] = value
 
     return DictResult(query, translation, phones, explains, web)
 
