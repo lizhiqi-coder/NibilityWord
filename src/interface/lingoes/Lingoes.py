@@ -348,6 +348,22 @@ class LingoesDictReader():
 
         return wordIdxData
 
+    def getCooked(self):
+        return
+
+
+class Lingoes():
+    def __init__(self, dict_file_name):
+        self.dict_file_name = dict_file_name
+        # find file path
+        raw_file_path = ''
+        cooked_file_path = ''
+        if True:
+            LingoesDictReader(raw_file_path).getCooked()
+
+    def getFastEntry(self, key):
+        return
+
 
 if __name__ == '__main__':
     import os
