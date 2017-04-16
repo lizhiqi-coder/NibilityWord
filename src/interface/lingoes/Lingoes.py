@@ -84,6 +84,7 @@ class Indexing():
 
 class LingoesDictReader():
     def __init__(self, file_path):
+        self.raw_file_path = file_path
         # 索引数组
         self.definitionsArray = []
         # 压缩数据块数组
@@ -240,6 +241,11 @@ class LingoesDictReader():
             lastOffset = offset
 
     def extract(self, inflatedBytes, offsetDefs, offsetXml):
+
+        self.cooked_file_path = os.path.splitext(self.raw_file_path)[0] + '.cooked'
+        self.cooked_file = open(self.cooked_file_path, 'w')
+        self.cooked_file.truncate()
+
         DICT_OFFSET_LENGTH = DictOffset.bytes()
         defTotal = offsetDefs / DICT_OFFSET_LENGTH - 1
 
@@ -266,11 +272,15 @@ class LingoesDictReader():
 
                 totalXmls[i] = wordData[1]
                 wordsLen[i] = wordData[1].__len__()
-                print wordData[0], '=', wordData[1]
+
+                # 写入缓存文件
+                line = wordData[0] + '=' + wordData[1] + '\n'
+                self.cooked_file.write(line.encode(encodings[0]))
                 counter += 1
             except Exception, e:
                 print i, 'Exception->', e
 
+        self.cooked_file.close()
         print '\n'
         # print totalWords
         # print totalXmls
@@ -350,8 +360,11 @@ class LingoesDictReader():
 
         return wordIdxData
 
-    def getCooked(self):
-        return
+    def getCookedFile(self):
+        if os.path.exists(self.cooked_file):
+            return self.cooked_file
+        else:
+            return None
 
 
 class Lingoes():
@@ -366,7 +379,7 @@ class Lingoes():
         raw_file_path = ''
         cooked_file_path = ''
         if False:
-            LingoesDictReader(raw_file_path).getCooked()
+            LingoesDictReader(raw_file_path).getCookedFile()
 
     def getFastEntry(self, key):
         xml = ''
