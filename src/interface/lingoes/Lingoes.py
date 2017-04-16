@@ -85,6 +85,10 @@ class Indexing():
 class LingoesDictReader():
     def __init__(self, file_path):
         self.raw_file_path = file_path
+        self.cooked_file_path = os.path.splitext(self.raw_file_path)[0] + '.cooked'
+        if os.path.exists(self.cooked_file_path) and os.path.getsize(self.cooked_file_path):
+            return
+
         # 索引数组
         self.definitionsArray = []
         # 压缩数据块数组
@@ -242,9 +246,8 @@ class LingoesDictReader():
 
     def extract(self, inflatedBytes, offsetDefs, offsetXml):
 
-        self.cooked_file_path = os.path.splitext(self.raw_file_path)[0] + '.cooked'
-        self.cooked_file = open(self.cooked_file_path, 'w')
-        self.cooked_file.truncate()
+        cooked_file = open(self.cooked_file_path, 'w')
+        cooked_file.truncate()
 
         DICT_OFFSET_LENGTH = DictOffset.bytes()
         defTotal = offsetDefs / DICT_OFFSET_LENGTH - 1
@@ -275,12 +278,12 @@ class LingoesDictReader():
 
                 # 写入缓存文件
                 line = wordData[0] + '=' + wordData[1] + '\n'
-                self.cooked_file.write(line.encode(encodings[0]))
+                cooked_file.write(line.encode(encodings[0]))
                 counter += 1
             except Exception, e:
                 print i, 'Exception->', e
 
-        self.cooked_file.close()
+        cooked_file.close()
         print '\n'
         # print totalWords
         # print totalXmls
@@ -361,8 +364,8 @@ class LingoesDictReader():
         return wordIdxData
 
     def getCookedFile(self):
-        if os.path.exists(self.cooked_file):
-            return self.cooked_file
+        if os.path.exists(self.cooked_file_path):
+            return self.cooked_file_path
         else:
             return None
 
@@ -376,10 +379,14 @@ class Lingoes():
     def __init__(self, dict_file_name):
         self.dict_file_name = dict_file_name
         # find file path
-        raw_file_path = ''
-        cooked_file_path = ''
-        if False:
-            LingoesDictReader(raw_file_path).getCookedFile()
+        raw_file_path = os.path.join(os.curdir, '/data/localDicts/', self.dict_file_name)
+        cooked_file_path = LingoesDictReader(raw_file_path).getCookedFile()
+        if cooked_file_path == None:
+            return
+        self.cooked_file = open(cooked_file_path, 'r')
+
+    def __del__(self):
+        self.cooked_file.close()
 
     def getFastEntry(self, key):
         xml = ''
