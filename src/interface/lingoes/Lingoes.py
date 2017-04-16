@@ -386,7 +386,10 @@ class Lingoes():
         self.cooked_file = open(cooked_file_path, 'r')
 
     def __del__(self):
-        self.cooked_file.close()
+        try:
+            self.cooked_file.close()
+        except Exception, e:
+            print e
 
     def getFastEntry(self, key):
         xml = ''
