@@ -379,11 +379,40 @@ class Lingoes():
     def __init__(self, dict_file_name):
         self.dict_file_name = dict_file_name
         # find file path
-        raw_file_path = os.path.join(os.curdir, '/data/localDicts/', self.dict_file_name)
+        raw_file_path = os.path.join(os.path.abspath(os.curdir), '../../data/localDicts/', self.dict_file_name)
         cooked_file_path = LingoesDictReader(raw_file_path).getCookedFile()
         if cooked_file_path == None:
             return
         self.cooked_file = open(cooked_file_path, 'r')
+        self.indexing = self.buildIndex()
+
+    def buildIndex(self):
+        """建立二级索引"""
+        line = self.cooked_file.readline()
+        line_index = 0
+        # indexing = [[-1] * 27] * 26  # 第二个为空的情况 创建列表，会导致重复
+        indexing = [[-1 for i in range(27)] for i in range(26)]
+        indexing[0][0] = line_index
+
+        while line:
+            idx = [-1] * 2
+            for char in line.split('=')[0]:
+                if idx[0] == -1 and char.isalpha() and 'a' <= char.lower() <= 'z':
+
+                    idx[0] = ord(char.lower()) - ord('a')
+
+                elif idx[0] != -1 and idx[1] == -1 and char.isalpha() and 'a' <= char.lower() <= 'z':
+                    idx[1] = ord(char.lower()) - ord('a') + 1
+
+                    break
+            if idx[1] == -1:
+                idx[1] = 0
+
+            indexing[idx[0]][idx[1]] = line_index
+
+            line = self.cooked_file.readline()
+            line_index += 1
+        return indexing
 
     def __del__(self):
         try:
@@ -392,6 +421,16 @@ class Lingoes():
             print e
 
     def getFastEntry(self, key):
+
+        start = self.indexing[ord(key[0]) - ord('a')][0]
+        if len(key) >= 2 and key[1].isalpha():
+            start = self.indexing[ord(key[0]) - ord('a')][ord(key[1]) - ord('a') + 1]
+
+        end = self.indexing[ord(key[0]) - ord('a')][0]
+
+        fragment_lines = self.cooked_file.readlines()[start:(end - start + 1)]
+
+        return
         xml = ''
         EOW, phones, explains = self._parseXml(xml)
 
@@ -442,5 +481,5 @@ class Lingoes():
 if __name__ == '__main__':
     import os
 
-    LingoesDictReader(os.path.abspath('../../data/localDicts/Vicon English-Chinese(S) Dictionary.ld2'))
-    # LingoesDictReader(os.path.abspath('../../data/localDicts/dict.ld2'))
+    # LingoesDictReader(os.path.abspath('../../data/localDicts/Vicon English-Chinese(S) Dictionary.ld2'))
+    Lingoes('Vicon English-Chinese(S) Dictionary.ld2').getFastEntry('hello')
