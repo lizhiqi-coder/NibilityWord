@@ -11,6 +11,8 @@ import zlib
 from io import BytesIO
 
 from Bean import *
+import xml.etree.ElementTree as ET
+from src.model.DetailModel import DictResult
 
 """
 读取二进制文件->读取头->读取索引->读取数据块(blocks)
@@ -353,16 +355,65 @@ class LingoesDictReader():
 
 
 class Lingoes():
+    TAG_EXPLEIN = 'N'
+    TAG_POS = 'U'
+    TAG_EOW = 'E'
+    TAG_PHONE = 'M'
+
     def __init__(self, dict_file_name):
         self.dict_file_name = dict_file_name
         # find file path
         raw_file_path = ''
         cooked_file_path = ''
-        if True:
+        if False:
             LingoesDictReader(raw_file_path).getCooked()
 
     def getFastEntry(self, key):
-        return
+        xml = ''
+        EOW, phones, explains = self._parseXml(xml)
+
+        dictResult = DictResult(query=key,
+                                translation=None,
+                                phones=phones,
+                                explains=explains)
+        return dictResult
+
+    def _parseXml(self, xml_str):
+        """
+        parts of speech POS
+        exchange of word EOW
+        explains
+        phones
+        """
+        EOW = []
+        phones = []
+        explains = []
+
+        root = ET.fromstring(xml_str)
+
+        for explain_xml in root.iter(self.TAG_EXPLEIN):
+
+            if len(explain_xml) > 0 and explain_xml[0].tag == self.TAG_POS:  # 存在词性
+                explain = explain_xml[0].text + explain_xml[0].tail
+
+            else:
+                if explain_xml.text == None:
+                    continue
+                else:
+                    explain = explain_xml.text
+
+            explains.append(explain)
+
+        for phone_xml in root.iter(self.TAG_PHONE):
+            if phone_xml.text == None:
+                continue
+            phones.append(phone_xml.text)
+
+        EOW_xml = root.find(self.TAG_EOW)
+        if EOW_xml != None:
+            EOW = EOW_xml.text.split('|')
+
+        return EOW, phones, explains
 
 
 if __name__ == '__main__':
