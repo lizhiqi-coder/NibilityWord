@@ -377,6 +377,7 @@ class Lingoes():
     TAG_POS = 'U'
     TAG_EOW = 'E'
     TAG_PHONE = 'M'
+    TAG_ROOT = 'C'
 
     MAX_FAST_ENTRY = 10
 
@@ -453,7 +454,7 @@ class Lingoes():
 
                 EOW, phones, explains = self._parseXml(xml)
 
-                dictResult = DictResult(query=key,
+                dictResult = DictResult(query=word,
                                         translation=None,
                                         phones=phones,
                                         explains=explains)
@@ -462,12 +463,19 @@ class Lingoes():
         return matched_dict
 
     def _parseXml(self, str):
-        xmls = str.split(',')
+        root_head = '<' + self.TAG_ROOT + '>'
+        root_end = '</' + self.TAG_ROOT + '>'
+        xmls = str.split(root_end + ',' + root_head)
         EOW = []
         phones = []
         explains = []
 
         for xml in xmls:
+            if not xml.startswith(root_head):
+                xml = root_head + xml
+            if not xml.endswith(root_end):
+                xml = xml + root_end
+
             a, b, c = self._parseXmlInter(xml)
             EOW.extend(a)
             phones.extend(b)
@@ -517,4 +525,4 @@ if __name__ == '__main__':
     import os
 
     # LingoesDictReader(os.path.abspath('../../data/localDicts/Vicon English-Chinese(S) Dictionary.ld2'))
-    Lingoes('Vicon English-Chinese(S) Dictionary.ld2').getFastEntry('he')
+    Lingoes('Vicon English-Chinese(S) Dictionary.ld2').getFastEntry('head')
