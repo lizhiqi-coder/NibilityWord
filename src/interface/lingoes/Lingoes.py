@@ -13,6 +13,7 @@ from io import BytesIO
 from Bean import *
 import xml.etree.ElementTree as ET
 from src.model.DetailModel import DictResult
+import linecache
 
 """
 读取二进制文件->读取头->读取索引->读取数据块(blocks)
@@ -380,18 +381,20 @@ class Lingoes():
         self.dict_file_name = dict_file_name
         # find file path
         raw_file_path = os.path.join(os.path.abspath(os.curdir), '../../data/localDicts/', self.dict_file_name)
-        cooked_file_path = LingoesDictReader(raw_file_path).getCookedFile()
-        if cooked_file_path == None:
+        self.cooked_file_path = LingoesDictReader(raw_file_path).getCookedFile()
+        if self.cooked_file_path == None:
             return
-        self.cooked_file = open(cooked_file_path, 'r')
         self.indexing = self.buildIndex()
+        linecache.checkcache(self.cooked_file_path)
 
     def buildIndex(self):
         """建立二级索引"""
-        line = self.cooked_file.readline()
-        line_index = 0
+        cooked_file = open(self.cooked_file_path, 'r')
+
+        line = cooked_file.readline()
+        line_index = 1
         # indexing = [[-1] * 27] * 26  # 第二个为空的情况 创建列表，会导致重复
-        indexing = [[-1 for i in range(27)] for i in range(26)]
+        indexing = [[-1] * 27 for i in range(26)]
         indexing[0][0] = line_index
 
         while line:
@@ -410,26 +413,36 @@ class Lingoes():
 
             indexing[idx[0]][idx[1]] = line_index
 
-            line = self.cooked_file.readline()
+            line = cooked_file.readline()
             line_index += 1
+
+        cooked_file.close()
+
         return indexing
 
     def __del__(self):
-        try:
-            self.cooked_file.close()
-        except Exception, e:
-            print e
+        linecache.clearcache()
+        pass
 
     def getFastEntry(self, key):
-
-        start = self.indexing[ord(key[0]) - ord('a')][0]
+        row = ord(key[0]) - ord('a')
+        if len(key) == 1:
+            start = self.indexing[row][0]
+            end = self.indexing[row][ord('z') - ord('a') + 1]
         if len(key) >= 2 and key[1].isalpha():
-            start = self.indexing[ord(key[0]) - ord('a')][ord(key[1]) - ord('a') + 1]
+            col = ord(key[1]) - ord('a') + 1
+            if self.indexing[col] == -1:
+                return  # 不存在第二字母为key[1]的单词索引
+            else:
+                end = self.indexing[row][col]
+                pre_offset = 1
+                while self.indexing[row][col - pre_offset] == -1 and col - pre_offset > 0:
+                    pre_offset += 1
+                start = self.indexing[row][col - pre_offset] + 1
 
-        end = self.indexing[ord(key[0]) - ord('a')][0]
-
-        fragment_lines = self.cooked_file.readlines()[start:(end - start + 1)]
-
+        # fragment_lines = self.cooked_file.readlines()[start:(end - start + 1)]
+        for i in range(start, end + 1):
+            print linecache.getline(self.cooked_file_path, i)
         return
         xml = ''
         EOW, phones, explains = self._parseXml(xml)
