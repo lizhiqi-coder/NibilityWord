@@ -14,6 +14,7 @@ from Bean import *
 import xml.etree.ElementTree as ET
 from src.model.DetailModel import DictResult
 import linecache
+import re
 
 """
 读取二进制文件->读取头->读取索引->读取数据块(blocks)
@@ -377,6 +378,8 @@ class Lingoes():
     TAG_EOW = 'E'
     TAG_PHONE = 'M'
 
+    MAX_FAST_ENTRY = 10
+
     def __init__(self, dict_file_name):
         self.dict_file_name = dict_file_name
         # find file path
@@ -440,20 +443,39 @@ class Lingoes():
                     pre_offset += 1
                 start = self.indexing[row][col - pre_offset] + 1
 
-        # fragment_lines = self.cooked_file.readlines()[start:(end - start + 1)]
+        matched_dict = []
         for i in range(start, end + 1):
-            print linecache.getline(self.cooked_file_path, i)
-        return
-        xml = ''
-        EOW, phones, explains = self._parseXml(xml)
+            line = linecache.getline(self.cooked_file_path, i)
+            word = line.split('=')[0].strip()
+            pattern = r'^\s*' + key + r'\S*\s*'
+            if re.match(pattern, word):
+                xml = line.split('=')[1].strip()
 
-        dictResult = DictResult(query=key,
-                                translation=None,
-                                phones=phones,
-                                explains=explains)
-        return dictResult
+                EOW, phones, explains = self._parseXml(xml)
 
-    def _parseXml(self, xml_str):
+                dictResult = DictResult(query=key,
+                                        translation=None,
+                                        phones=phones,
+                                        explains=explains)
+                matched_dict.append(dictResult)
+
+        return matched_dict
+
+    def _parseXml(self, str):
+        xmls = str.split(',')
+        EOW = []
+        phones = []
+        explains = []
+
+        for xml in xmls:
+            a, b, c = self._parseXmlInter(xml)
+            EOW.extend(a)
+            phones.extend(b)
+            explains.extend(c)
+
+        return EOW, phones, explains
+
+    def _parseXmlInter(self, xml_str):
         """
         parts of speech POS
         exchange of word EOW
@@ -495,4 +517,4 @@ if __name__ == '__main__':
     import os
 
     # LingoesDictReader(os.path.abspath('../../data/localDicts/Vicon English-Chinese(S) Dictionary.ld2'))
-    Lingoes('Vicon English-Chinese(S) Dictionary.ld2').getFastEntry('hello')
+    Lingoes('Vicon English-Chinese(S) Dictionary.ld2').getFastEntry('he')
