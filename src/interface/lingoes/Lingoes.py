@@ -15,6 +15,8 @@ import xml.etree.ElementTree as ET
 from src.model.DetailModel import DictResult
 import linecache
 import re
+from src.utils import NBUtils
+import os
 
 """
 读取二进制文件->读取头->读取索引->读取数据块(blocks)
@@ -384,7 +386,7 @@ class Lingoes():
     def __init__(self, dict_file_name):
         self.dict_file_name = dict_file_name
         # find file path
-        raw_file_path = os.path.join(os.path.abspath(os.curdir), '../../data/localDicts/', self.dict_file_name)
+        raw_file_path = os.path.join(NBUtils.getRootDir(), 'data/localDicts/', self.dict_file_name)
         self.cooked_file_path = LingoesDictReader(raw_file_path).getCookedFile()
         if self.cooked_file_path == None:
             return
@@ -522,7 +524,4 @@ class Lingoes():
 
 
 if __name__ == '__main__':
-    import os
-
-    # LingoesDictReader(os.path.abspath('../../data/localDicts/Vicon English-Chinese(S) Dictionary.ld2'))
-    Lingoes('Vicon English-Chinese(S) Dictionary.ld2').getFastEntry('head')
+    pass

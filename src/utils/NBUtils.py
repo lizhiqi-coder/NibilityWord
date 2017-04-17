@@ -8,6 +8,7 @@ except ImportError:
     from PyQt4.QtGui import *
 
 import platform
+import os
 
 
 def bindStyleSheet(ref, style_sheet):
@@ -34,3 +35,16 @@ def containsChinese(str):
             return True
 
     return False
+
+
+ROOT_DIR_NAME = 'NiubilityWord'
+
+
+def getRootDir():
+    dir = os.getcwd()
+    while not dir.endswith(ROOT_DIR_NAME):
+        temp_dir = dir
+        dir = os.path.abspath(os.path.join(dir, os.pardir))
+        if dir == temp_dir:
+            return None
+    return dir
