@@ -13,6 +13,7 @@ from DetailPanel import DetailPanel
 from IndexListPanel import IndexListPanel
 from res import R
 from utils import NBUtils
+from src.interface.lingoes.Lingoes import Lingoes
 
 
 class SearchBanner(QWidget):
@@ -127,15 +128,17 @@ class SearchBanner(QWidget):
         self.index_list_panel.initTransfrom(self.width() - 30, 200)
         self.index_list_panel.hide()
         self.root_layout.addWidget(self.index_list_panel)
-        # self.local_dict = Lingoes('dict_name')
+        self.local_dict = Lingoes('Vicon English-Chinese(S) Dictionary.ld2')
 
     def __onInputChanged(self):
         self.detail_panel.hide()
         if self.text_edit.text() != '':
             self.index_list_panel.show()
             self.btn_clear.show()
-            # entry = self.local_dict.getFastEntry(self.text_edit.text())
-            # self.index_list_panel.setData(entry)
+            fast_entrys = self.local_dict.getFastEntry(self.text_edit.text())
+            for fast in fast_entrys:
+                print fast.query, '---->', fast.explains
+                # self.index_list_panel.setData(entry)
 
 
         else:

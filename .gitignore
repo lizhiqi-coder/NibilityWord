@@ -2,3 +2,6 @@
 R.py
 *.pyc
 /res/cache/
+*.ld2
+*.ldx
+*.cooked
