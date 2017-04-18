@@ -6,18 +6,19 @@ try:
 except ImportError:
     from PyQt4.QtCore import *
     from PyQt4.QtGui import *
+import sys
+
 from BuddyListWidget import BuddyListWidget
 from res import R
 from utils import NBUtils
 
-import sys
 
-
-class IndexListPanel(QListWidget):
+class IndexListPanel(QWidget):
     """实时模糊搜索列表:本地快速查找"""
 
-    def __init__(self):
+    def __init__(self, w, h):
         super(IndexListPanel, self).__init__()
+        self.initTransfrom(w, h)
         self._initUI()
 
     def initTransfrom(self, w, h):
@@ -34,9 +35,19 @@ class IndexListPanel(QListWidget):
         self.index_list_widget = BuddyListWidget()
         self.layout().addWidget(self.index_list_widget)
 
-    def refresh(self, dict):
-        self.index_list_widget.setData(dict=dict)
-        self.index_list_widget.setCurrentRow(0)
+    def display(self, dict_result_list):
+        self.clear()
+        display_dict = {}
+        for dict in dict_result_list:
+            display_dict[dict.query] = ''.join(dict.explains)
+
+        self.index_list_widget.setData(display_dict)
+        self.setCurrentRow(0)
+
+    def clear(self):
+        self.index_list_widget.setData({})
+
+        pass
 
 
 if __name__ == '__main__':
@@ -45,5 +56,5 @@ if __name__ == '__main__':
     panel.show()
 
     dict = {'1': 'value1', '2': 'value2'}
-    panel.refresh(dict)
+    panel.display()
     sys.exit(app.exec_())

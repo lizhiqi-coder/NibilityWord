@@ -124,8 +124,7 @@ class SearchBanner(QWidget):
         self.root_layout.addWidget(self.detail_panel)
 
     def __initListPanel(self):
-        self.index_list_panel = IndexListPanel()
-        self.index_list_panel.initTransfrom(self.width() - 30, 200)
+        self.index_list_panel = IndexListPanel(self.width() - 30, 200)
         self.index_list_panel.hide()
         self.root_layout.addWidget(self.index_list_panel)
         self.local_dict = Lingoes('Vicon English-Chinese(S) Dictionary.ld2')
@@ -136,9 +135,7 @@ class SearchBanner(QWidget):
             self.index_list_panel.show()
             self.btn_clear.show()
             fast_entrys = self.local_dict.getFastEntry(self.text_edit.text())
-            for fast in fast_entrys:
-                print fast.query, '---->', fast.explains
-                # self.index_list_panel.setData(entry)
+            # self.index_list_panel.display(fast_entrys)
 
 
         else:
