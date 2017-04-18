@@ -78,11 +78,11 @@ class MediaLoader():
             self._media_path = local_search_result
             self._media_url = None
         else:
-            download_runable = functools.partial(download, self._media_url,
+            download_runnable = functools.partial(download, self._media_url,
                                                  self._conf.savePath,
                                                  self._mediaDownloadCallback)
 
-            self.work = WorkThread(download_runable)
+            self.work = WorkThread(download_runnable)
             self.work.start()
         return self
 

@@ -31,8 +31,7 @@ class SearchBanner(QWidget):
         self.setGeometry(0, 0, 350, 60)
         self.setFixedWidth(self.width())
         self.setMaximumHeight(self.height())
-        self.__center(self)
-        self.moveByCenter(100, 100)
+        self.moveByCenter(350, -300)
         self.setWindowFlags(Qt.WindowCloseButtonHint | Qt.WindowStaysOnTopHint)
         NBUtils.bindStyleSheet(self, R.qss.global_style)
 
@@ -93,6 +92,10 @@ class SearchBanner(QWidget):
         widget.move(rect.topLeft())
 
     def moveByCenter(self, x, y):
+        rect = self.frameGeometry()
+        self.center_point = QDesktopWidget().availableGeometry().center()
+        rect.moveCenter(self.center_point + QPoint(x, y))
+        self.move(rect.topLeft())
         pass
 
     def __onSearch(self):
@@ -136,6 +139,7 @@ class SearchBanner(QWidget):
         if self.text_edit.text() != '' and not NBUtils.containsChinese(self.text_edit.text()):
             self.index_list_panel.show()
             self.btn_clear.show()
+
             fast_entrys = self.local_dict.getFastEntry(self.text_edit.text())
             # self.index_list_panel.display(fast_entrys)
 
