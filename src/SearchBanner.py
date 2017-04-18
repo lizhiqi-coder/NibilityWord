@@ -28,8 +28,9 @@ class SearchBanner(QWidget):
         self._initShortcut()
 
     def __initTransform(self):
-        self.setGeometry(0, 0, 420, 60)
+        self.setGeometry(0, 0, 350, 60)
         self.setFixedWidth(self.width())
+        self.setMaximumHeight(self.height())
         self.__center(self)
         self.moveByCenter(100, 100)
         self.setWindowFlags(Qt.WindowCloseButtonHint | Qt.WindowStaysOnTopHint)
@@ -41,7 +42,8 @@ class SearchBanner(QWidget):
 
     def __initInputBar(self):
         self.root_layout = QVBoxLayout()
-        self.root_layout.setSizeConstraint(QLayout.SetFixedSize)
+        # self.root_layout.setSizeConstraint(QLayout.SetFixedSize)
+        self.root_layout.setAlignment(Qt.AlignTop)
         self.setLayout(self.root_layout)
 
         self.text_edit = QLineEdit()
@@ -131,7 +133,7 @@ class SearchBanner(QWidget):
 
     def __onInputChanged(self):
         self.detail_panel.hide()
-        if self.text_edit.text() != '':
+        if self.text_edit.text() != '' and not NBUtils.containsChinese(self.text_edit.text()):
             self.index_list_panel.show()
             self.btn_clear.show()
             fast_entrys = self.local_dict.getFastEntry(self.text_edit.text())
