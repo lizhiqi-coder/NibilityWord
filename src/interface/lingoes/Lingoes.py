@@ -446,7 +446,7 @@ class Lingoes():
                     pre_offset += 1
                 start = self.indexing[row][col - pre_offset] + 1
 
-        matched_dict = []
+        matched_entry_list = []
         for i in range(start, end + 1):
             line = linecache.getline(self.cooked_file_path, i)
             word = line.split('=')[0].strip()
@@ -460,9 +460,11 @@ class Lingoes():
                                         translation=None,
                                         phones=phones,
                                         explains=explains)
-                matched_dict.append(dictResult)
+                matched_entry_list.append(dictResult)
+                if len(matched_entry_list) >= self.MAX_FAST_ENTRY:
+                    break
 
-        return matched_dict
+        return matched_entry_list
 
     def _parseXml(self, str):
         root_head = '<' + self.TAG_ROOT + '>'

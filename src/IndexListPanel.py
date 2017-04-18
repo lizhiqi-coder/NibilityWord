@@ -37,11 +37,11 @@ class IndexListPanel(QWidget):
 
     def display(self, dict_result_list):
         self.clear()
-        display_dict = {}
+        display_data = {}
         for dict in dict_result_list:
-            display_dict[dict.query] = ''.join(dict.explains)
+            display_data[dict.query] = ''.join(dict.explains)
 
-        self.index_list_widget.setData(display_dict)
+        self.index_list_widget.setData(display_data)
         self.setCurrentRow(0)
 
     def clear(self):

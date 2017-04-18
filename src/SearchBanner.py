@@ -141,7 +141,7 @@ class SearchBanner(QWidget):
             self.btn_clear.show()
 
             fast_entrys = self.local_dict.getFastEntry(self.text_edit.text())
-            # self.index_list_panel.display(fast_entrys)
+            self.index_list_panel.display(fast_entrys)
 
 
         else:
