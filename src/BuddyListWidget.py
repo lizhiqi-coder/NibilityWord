@@ -38,6 +38,9 @@ class BuddyListWidget(QListWidget):
             self._value = value
             self._initUI()
 
+        def getKey(self):
+            return self._key
+
         def _initUI(self):
             key_lb = QLabel(self._key)
             key_lb.setFixedWidth(40)

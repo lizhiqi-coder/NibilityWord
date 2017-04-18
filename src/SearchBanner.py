@@ -132,7 +132,12 @@ class SearchBanner(QWidget):
         self.index_list_panel = IndexListPanel(self.width() - 30, 200)
         self.index_list_panel.hide()
         self.root_layout.addWidget(self.index_list_panel)
+        self.index_list_panel.index_list_widget.itemSelectionChanged.connect(self.onListPanelSelectChanged)
         self.local_dict = Lingoes('Vicon English-Chinese(S) Dictionary.ld2')
+
+    def onListPanelSelectChanged(self):
+
+        print self.index_list_panel.getCurrentKey()
 
     def __onInputChanged(self):
         self.detail_panel.hide()
