@@ -81,6 +81,8 @@ class SearchBanner(QWidget):
         self.btn_search.clicked.connect(self.__onSearch)
         self.btn_clear.clicked.connect(self._onClear)
 
+        self.locked_input_bar = False
+
     def _onClear(self):
         self.text_edit.clear()
 
@@ -137,9 +139,14 @@ class SearchBanner(QWidget):
 
     def onListPanelSelectChanged(self):
 
-        print self.index_list_panel.getCurrentKey()
+        key_word = self.index_list_panel.getCurrentKey()
+        self.locked_input_bar = True
+        self.text_edit.setText(key_word)
+        self.locked_input_bar = False
 
     def __onInputChanged(self):
+        if self.locked_input_bar:
+            return
         self.detail_panel.hide()
         if self.text_edit.text() != '' and not NBUtils.containsChinese(self.text_edit.text()):
             self.index_list_panel.show()

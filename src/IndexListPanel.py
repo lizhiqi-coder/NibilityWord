@@ -43,7 +43,7 @@ class IndexListPanel(QWidget):
             display_data[dict.query] = ''.join(dict.explains)
 
         self.index_list_widget.setData(display_data)
-        self.index_list_widget.setCurrentRow(0)
+        # self.index_list_widget.setCurrentRow(0)
 
     def getCurrentKey(self):
         item = self.index_list_widget.currentItem()
