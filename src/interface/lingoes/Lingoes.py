@@ -17,6 +17,7 @@ import linecache
 import re
 from src.utils import NBUtils
 import os
+from BpTree import Node
 
 """
 读取二进制文件->读取头->读取索引->读取数据块(blocks)
@@ -383,6 +384,9 @@ class Lingoes():
 
     MAX_FAST_ENTRY = 10
 
+    DICT_SPLIT = '='
+    INDEX_LEVEL = 3
+
     def __init__(self, dict_file_name):
         self.dict_file_name = dict_file_name
         # find file path
@@ -392,6 +396,30 @@ class Lingoes():
             return
         self.indexing = self.buildIndex()
         linecache.checkcache(self.cooked_file_path)
+
+    def buildIndexTree(self):
+        cooked_file = open(self.cooked_file_path, 'r')
+        line = cooked_file.readline()
+        line_index = 1
+        root = Node()
+        while line:
+            input_node = root
+            head_word = line.split(self.DICT_SPLIT)[0]
+            for i in range(len(head_word)):
+                if i >= self.INDEX_LEVEL:
+                    break
+                char = head_word[i].lower()
+                child_node = input_node.findChildByKey(char)
+
+                if child_node:
+                    child_node.value = line_index
+                else:
+                    child_node = Node(key=char, value=line_index, father=input_node)
+                    input_node.addChild(child_node)
+
+                input_node = child_node
+        return root
+        cooked_file.close()
 
     def buildIndex(self):
         """建立二级索引"""
@@ -425,6 +453,34 @@ class Lingoes():
         cooked_file.close()
 
         return indexing
+
+    def searchTree(self, str):
+        root = self.buildIndexTree()
+
+        node = root
+        str_i = 0
+        while node.findChildByKey(str[str_i]) and str_i < len(str):
+            node = node.findChildByKey(str[str_i])
+            str_i += 1
+        end = node.value
+
+        if node.preBrother:
+            start = node.preBrother.value + 1
+        else:
+            father = node.father
+            while father.preBrother == None:
+                if father == root:
+                    break
+                father = father.father
+            if father == root:
+                start = 1
+            else:
+                last_end_node = father
+                while last_end_node.endChind:
+                    last_end_node = last_end_node.endChind
+                start = last_end_node.value + 1
+
+        return start, end
 
     def __del__(self):
         linecache.clearcache()
