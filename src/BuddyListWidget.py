@@ -43,7 +43,7 @@ class BuddyListWidget(QListWidget):
 
         def _initUI(self):
             key_lb = QLabel(self._key)
-            key_lb.setFixedWidth(40)
+            key_lb.setMinimumWidth(40)
             value_lb = QLabel(self._value)
             value_lb.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)
             root_layout = QHBoxLayout()
