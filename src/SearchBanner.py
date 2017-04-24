@@ -77,11 +77,24 @@ class SearchBanner(QWidget):
         # 绑定信号量
         self.text_edit.textChanged.connect(self.__onInputChanged)
         self.text_edit.returnPressed.connect(self.__onSearch)
+        self.text_edit.keyPressEvent = self._onEditKeyPress
 
         self.btn_search.clicked.connect(self.__onSearch)
         self.btn_clear.clicked.connect(self._onClear)
 
         self.locked_input_bar = False
+
+    def _onEditKeyPress(self, event):
+        if not self.index_list_panel.isHidden():
+            end_row = self.index_list_panel.index_list_widget.count() - 1
+            if event.key() == Qt.Key_Up and self.index_list_panel.index_list_widget.currentRow() <= 0:
+                self.index_list_panel.index_list_widget.setCurrentRow(end_row)
+
+            elif event.key() == Qt.Key_Down and self.index_list_panel.index_list_widget.currentRow() >= end_row:
+                self.index_list_panel.index_list_widget.setCurrentRow(0)
+            else:
+                self.index_list_panel.index_list_widget.keyPressEvent(event)
+        QLineEdit.keyPressEvent(self.text_edit, event)
 
     def _onClear(self):
         self.text_edit.clear()
