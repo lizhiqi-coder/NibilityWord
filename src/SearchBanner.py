@@ -36,7 +36,7 @@ class SearchBanner(QWidget):
         NBUtils.bindStyleSheet(self, R.qss.global_style)
 
     def __initTitle(self):
-        self.setWindowTitle(u'牛霸词典')
+        self.setWindowTitle(R.string.app_name_cn)
         self.setWindowIcon(QIcon(R.png.dict))
 
     def __initInputBar(self):

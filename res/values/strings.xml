@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <resources>
     <string name="Helvetica">Helvetica</string>
+    <string name="app_name_cn">牛霸词典</string>
+    <string name="app_name_en">NiubilityWord</string>
 </resources>
