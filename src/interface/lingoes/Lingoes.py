@@ -398,33 +398,6 @@ class Lingoes():
         linecache.checkcache(self.cooked_file_path)
         self.indexing_root = self.buildIndexTree()
 
-    def buildIndexTree(self):
-        cooked_file = open(self.cooked_file_path, 'r')
-        line = cooked_file.readline()
-        line_index = 1
-        root = Node()
-        while line:
-            input_node = root
-            head_word = line.split(self.DICT_SPLIT)[0]
-            for i in range(len(head_word)):
-                if i >= self.INDEX_LEVEL:
-                    break
-                char = head_word[i].lower()
-                child_node = input_node.findChildByKey(char)
-
-                if child_node:
-                    child_node.value = line_index
-                else:
-                    child_node = Node(key=char, value=line_index, father=input_node)
-                    input_node.addChild(child_node)
-
-                input_node = child_node
-            line = cooked_file.readline()
-            line_index += 1
-        cooked_file.close()
-        print 'build tree completed'
-        return root
-
     def buildIndex(self):
         """建立二级索引"""
         cooked_file = open(self.cooked_file_path, 'r')
@@ -457,6 +430,50 @@ class Lingoes():
         cooked_file.close()
 
         return indexing
+
+    def searchIndexing(self, key):
+        row = ord(key[0]) - ord('a')
+        if len(key) == 1:
+            start = self.indexing[row][0]
+            end = self.indexing[row][ord('z') - ord('a') + 1]
+        if len(key) >= 2 and key[1].isalpha():
+            col = ord(key[1]) - ord('a') + 1
+            if self.indexing[col] == -1:
+                return  # 不存在第二字母为key[1]的单词索引
+            else:
+                end = self.indexing[row][col]
+                pre_offset = 1
+                while self.indexing[row][col - pre_offset] == -1 and col - pre_offset > 0:
+                    pre_offset += 1
+                start = self.indexing[row][col - pre_offset] + 1
+        return start, end
+
+    def buildIndexTree(self):
+        cooked_file = open(self.cooked_file_path, 'r')
+        line = cooked_file.readline()
+        line_index = 1
+        root = Node()
+        while line:
+            input_node = root
+            head_word = line.split(self.DICT_SPLIT)[0]
+            for i in range(len(head_word)):
+                if i >= self.INDEX_LEVEL:
+                    break
+                char = head_word[i].lower()
+                child_node = input_node.findChildByKey(char)
+
+                if child_node:
+                    child_node.value = line_index
+                else:
+                    child_node = Node(key=char, value=line_index, father=input_node)
+                    input_node.addChild(child_node)
+
+                input_node = child_node
+            line = cooked_file.readline()
+            line_index += 1
+        cooked_file.close()
+        print 'build tree completed'
+        return root
 
     def searchTree(self, str):
 
@@ -494,21 +511,7 @@ class Lingoes():
         pass
 
     def getFastEntry(self, key):
-        row = ord(key[0]) - ord('a')
-        if len(key) == 1:
-            start = self.indexing[row][0]
-            end = self.indexing[row][ord('z') - ord('a') + 1]
-        if len(key) >= 2 and key[1].isalpha():
-            col = ord(key[1]) - ord('a') + 1
-            if self.indexing[col] == -1:
-                return  # 不存在第二字母为key[1]的单词索引
-            else:
-                end = self.indexing[row][col]
-                pre_offset = 1
-                while self.indexing[row][col - pre_offset] == -1 and col - pre_offset > 0:
-                    pre_offset += 1
-                start = self.indexing[row][col - pre_offset] + 1
-
+        start, end = self.searchTree(key)
         matched_entry_list = []
         for i in range(start, end + 1):
             line = linecache.getline(self.cooked_file_path, i)
