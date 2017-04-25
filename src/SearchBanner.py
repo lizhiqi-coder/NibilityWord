@@ -59,7 +59,7 @@ class TitleBar(QWidget):
         self.titleIcon.setIcon(QIcon(icon_path))
 
     def setTitleText(self, text):
-        self.titleIcon.setText(text)
+        self.titleText.setText(text)
 
     def mousePressEvent(self, event):
         self.is_pressed = True
