@@ -14,6 +14,8 @@ class BuddyListWidget(QListWidget):
         self._initUI()
 
     def _initUI(self):
+        self.setFocusPolicy(Qt.NoFocus)
+        self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         pass
 
     def setData(self, explains):
@@ -46,6 +48,7 @@ class BuddyListWidget(QListWidget):
             key_lb.setMinimumWidth(40)
             value_lb = QLabel(self._value)
             value_lb.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)
+            value_lb.setObjectName('value_label')
             root_layout = QHBoxLayout()
             self.setLayout(root_layout)
             self.layout().setContentsMargins(0, 0, 0, 0)

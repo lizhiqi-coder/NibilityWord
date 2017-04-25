@@ -34,7 +34,6 @@ class IndexListPanel(QWidget):
 
         self.index_list_widget = BuddyListWidget()
         self.layout().addWidget(self.index_list_widget)
-        self.index_list_widget.setFocusPolicy(Qt.NoFocus)
 
     def display(self, dict_result_list):
         self.clear()

@@ -27,8 +27,12 @@ QFrame {
     border-radius: 5px;
 }
 
-/*QLabel {*/
-    /*border: 0px solid;*/
-    /*background-color: transparent;*/
+QLabel {
+    border: 0px;
+    background-color: transparent;
+}
 
-/*}*/
+QLabel#value_label {
+    color: gray;
+}
+
