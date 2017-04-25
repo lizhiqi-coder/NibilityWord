@@ -6,18 +6,18 @@ except:
     from PyQt4.QtCore import *
 
 import array
+import linecache
+import os
+import re
 import struct
+import xml.etree.ElementTree as ET
 import zlib
 from io import BytesIO
 
 from Bean import *
-import xml.etree.ElementTree as ET
-from src.model.DetailModel import DictResult
-import linecache
-import re
-from src.utils import NBUtils
-import os
 from BpTree import Node
+from src.model.DetailModel import DictResult
+from src.utils import NBUtils
 
 """
 读取二进制文件->读取头->读取索引->读取数据块(blocks)
@@ -394,8 +394,9 @@ class Lingoes():
         self.cooked_file_path = LingoesDictReader(raw_file_path).getCookedFile()
         if self.cooked_file_path == None:
             return
-        self.indexing = self.buildIndex()
+        # self.indexing = self.buildIndex()
         linecache.checkcache(self.cooked_file_path)
+        self.indexing_root = self.buildIndexTree()
 
     def buildIndexTree(self):
         cooked_file = open(self.cooked_file_path, 'r')
@@ -418,8 +419,11 @@ class Lingoes():
                     input_node.addChild(child_node)
 
                 input_node = child_node
-        return root
+            line = cooked_file.readline()
+            line_index += 1
         cooked_file.close()
+        print 'build tree completed'
+        return root
 
     def buildIndex(self):
         """建立二级索引"""
@@ -455,11 +459,10 @@ class Lingoes():
         return indexing
 
     def searchTree(self, str):
-        root = self.buildIndexTree()
 
-        node = root
+        node = self.indexing_root
         str_i = 0
-        while node.findChildByKey(str[str_i]) and str_i < len(str):
+        while str_i < len(str) and node.findChildByKey(str[str_i]):
             node = node.findChildByKey(str[str_i])
             str_i += 1
         end = node.value
@@ -469,10 +472,10 @@ class Lingoes():
         else:
             father = node.father
             while father.preBrother == None:
-                if father == root:
+                if father == self.indexing_root:
                     break
                 father = father.father
-            if father == root:
+            if father == self.indexing_root:
                 start = 1
             else:
                 last_end_node = father
