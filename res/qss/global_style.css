@@ -21,18 +21,38 @@ QLineEdit {
     border: 0px solid;
 }
 
+/*frame*/
 QFrame {
     border: 1px solid gray;
-    background-color: lightgray;
     border-radius: 5px;
-}
-
-QLabel {
-    border: 0px;
     background-color: transparent;
 }
 
+QFrame#input_frame {
+    border: 1px solid gray;
+    background-color: lightgray;
+}
+
+QFrame#air_frame {
+    border: 0px;
+}
+
+/*label*/
+QLabel {
+    border: 1px solid gray;
+    background-color: lightgray;
+}
+
+QLabel#key_label {
+    border: 0px solid gray;
+    background-color: transparent;
+    font-size: 14px;
+}
+
 QLabel#value_label {
+    border: 0px;
+    background-color: transparent;
+    font-size: 14px;
     color: gray;
 }
 

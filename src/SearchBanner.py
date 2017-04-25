@@ -62,6 +62,7 @@ class SearchBanner(QWidget):
 
         input_layout = QHBoxLayout()
         input_frame.setLayout(input_layout)
+        input_frame.setObjectName('input_frame')
         input_frame.layout().setContentsMargins(5, 0, 5, 0)
         input_frame.layout().setSpacing(0)
         input_frame.layout().addWidget(self.text_edit)
@@ -168,10 +169,10 @@ class SearchBanner(QWidget):
             fast_entrys = self.local_dict.getFastEntry(self.text_edit.text())
             self.index_list_panel.display(fast_entrys)
 
-
         else:
             self.index_list_panel.hide()
             self.btn_clear.hide()
+            self.adjustSize()
 
     def _initShortcut(self):
 

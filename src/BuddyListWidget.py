@@ -45,7 +45,8 @@ class BuddyListWidget(QListWidget):
 
         def _initUI(self):
             key_lb = QLabel(self._key)
-            key_lb.setMinimumWidth(40)
+            key_lb.setMinimumWidth(20)
+            key_lb.setObjectName('key_label')
             value_lb = QLabel(self._value)
             value_lb.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)
             value_lb.setObjectName('value_label')
@@ -55,3 +56,5 @@ class BuddyListWidget(QListWidget):
             self.layout().setAlignment(Qt.AlignLeft)
             self.layout().addWidget(key_lb)
             self.layout().addWidget(value_lb)
+            key_lb.adjustSize()
+            key_lb.setFixedWidth(key_lb.width() + 1)
