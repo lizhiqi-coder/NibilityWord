@@ -467,6 +467,10 @@ class Lingoes():
             str_i += 1
         end = node.value
 
+        if end <= 0:
+            # 根节点下没有符合查询串的节点
+            return 1, 1
+
         if node.preBrother != None:
             start = node.preBrother.value + 1
         else:
