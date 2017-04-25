@@ -52,6 +52,10 @@ class TitleBar(QWidget):
         self.setWindowFlags(Qt.FramelessWindowHint)
         self.setAttribute(Qt.WA_TranslucentBackground)
 
+        self.titleIcon.setFocusPolicy(Qt.NoFocus)
+        self.btn_close.setFocusPolicy(Qt.NoFocus)
+        self.btn_setting.setFocusPolicy(Qt.NoFocus)
+
         self.btn_close.clicked.connect(self._onClose)
         self.btn_setting.clicked.connect(self._onSetting)
 
@@ -130,6 +134,10 @@ class SearchBanner(QWidget):
         self.btn_clear.hide()
         self.btn_history = QPushButton()
         self.btn_history.setIcon(QIcon(R.png.show_list))
+
+        self.btn_clear.setFocusPolicy(Qt.NoFocus)
+        self.btn_history.setFocusPolicy(Qt.NoFocus)
+        self.btn_search.setFocusPolicy(Qt.NoFocus)
 
         input_frame = QFrame()
 
