@@ -16,11 +16,12 @@ class Node():
         if len(self.children) == 0:
             self.startChild = child
             self.endChind = self.startChild
-
-        self.children[child.key] = child
-        self.endChind.nextBrother = child
-        child.preBrother = self.endChind
-        self.endChind = child
+            self.children[child.key] = child
+        else:
+            self.children[child.key] = child
+            self.endChind.nextBrother = child
+            child.preBrother = self.endChind
+            self.endChind = child
 
     def findChildByKey(self, char):
         if self.children.has_key(char):

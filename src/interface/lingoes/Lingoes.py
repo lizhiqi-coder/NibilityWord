@@ -467,7 +467,7 @@ class Lingoes():
             str_i += 1
         end = node.value
 
-        if node.preBrother:
+        if node.preBrother != None:
             start = node.preBrother.value + 1
         else:
             father = node.father
@@ -478,8 +478,8 @@ class Lingoes():
             if father == self.indexing_root:
                 start = 1
             else:
-                last_end_node = father
-                while last_end_node.endChind:
+                last_end_node = father.preBrother
+                while last_end_node.endChind != None:
                     last_end_node = last_end_node.endChind
                 start = last_end_node.value + 1
 
