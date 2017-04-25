@@ -16,6 +16,77 @@ from utils import NBUtils
 from src.interface.lingoes.Lingoes import Lingoes
 
 
+class TitleBar(QWidget):
+    TITLE_HEIGHT = 30
+
+    def __init__(self, parent):
+        QWidget.__init__(self, parent)
+
+        self._initUI()
+        self.is_pressed = False
+        self.startPos = None
+
+    def _initUI(self):
+        NBUtils.bindStyleSheet(self, R.qss.title_bar_style)
+        self.titleIcon = QPushButton()
+        self.titleText = QLabel()
+        self.btn_close = QPushButton()
+        self.btn_close.setIcon(QIcon(R.png.close))
+        self.btn_close.setObjectName('btn_function')
+        self.btn_setting = QPushButton()
+        self.btn_setting.setIcon(QIcon(R.png.setting))
+        self.btn_setting.setObjectName('btn_function')
+
+        self.root_layout = QHBoxLayout()
+        self.setLayout(self.root_layout)
+        self.layout().setContentsMargins(0, 0, 0, 0)
+        self.layout().setSpacing(10)
+
+        self.layout().addWidget(self.titleIcon)
+        self.layout().addWidget(self.titleText)
+        self.layout().addWidget(self.btn_setting)
+        self.layout().addWidget(self.btn_close)
+        self.titleText.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.setFixedHeight(self.TITLE_HEIGHT)
+        self.setWindowFlags(Qt.FramelessWindowHint)
+        self.setAttribute(Qt.WA_TranslucentBackground)
+
+        self.btn_close.clicked.connect(self._onClose)
+        self.btn_setting.clicked.connect(self._onSetting)
+
+    def setTitleIcon(self, icon_path):
+        self.titleIcon.setIcon(QIcon(icon_path))
+
+    def setTitleText(self, text):
+        self.titleIcon.setText(text)
+
+    def mousePressEvent(self, event):
+        self.is_pressed = True
+        self.startPos = event.globalPos()
+
+        return QWidget.mousePressEvent(self, event)
+
+    def mouseMoveEvent(self, event):
+        if self.is_pressed:
+            movePos = event.globalPos() - self.startPos
+            widgetPos = self.parentWidget().pos()
+            self.parentWidget().move(widgetPos.x() + movePos.x(),
+                                     widgetPos.y() + movePos.y())
+            self.startPos = event.globalPos()
+        return QWidget.mouseMoveEvent(self, event)
+
+    def mouseReleaseEvent(self, event):
+        self.is_pressed = False
+        return QWidget.mouseReleaseEvent(self, event)
+
+    def _onClose(self):
+        self.parent().close()
+
+    def _onSetting(self):
+        pass
+
+
 class SearchBanner(QWidget):
     def __init__(self):
         super(SearchBanner, self).__init__()
@@ -24,7 +95,6 @@ class SearchBanner(QWidget):
         self.__initInputBar()
         self.__initDetailPanel()
         self.__initListPanel()
-
         self._initShortcut()
 
     def __initTransform(self):
@@ -32,18 +102,21 @@ class SearchBanner(QWidget):
         self.setFixedWidth(self.width())
         self.setMaximumHeight(self.height())
         self.moveByCenter(350, -300)
-        self.setWindowFlags(Qt.WindowCloseButtonHint | Qt.WindowStaysOnTopHint)
+        self.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowStaysOnTopHint)
         NBUtils.bindStyleSheet(self, R.qss.global_style)
 
-    def __initTitle(self):
-        self.setWindowTitle(u'牛霸词典')
-        self.setWindowIcon(QIcon(R.png.dict))
-
-    def __initInputBar(self):
         self.root_layout = QVBoxLayout()
-        # self.root_layout.setSizeConstraint(QLayout.SetFixedSize)
         self.root_layout.setAlignment(Qt.AlignTop)
         self.setLayout(self.root_layout)
+        self.layout().setContentsMargins(10, 0, 10, 10)
+
+    def __initTitle(self):
+        self.title_bar = TitleBar(self)
+        self.layout().addWidget(self.title_bar)
+        self.title_bar.setTitleIcon(R.png.dict)
+        self.title_bar.setTitleText(R.string.app_name_cn)
+
+    def __initInputBar(self):
 
         self.text_edit = QLineEdit()
         self.text_edit.setFont(QFont(R.string.Helvetica, R.dimen.text_size_small))
@@ -62,6 +135,7 @@ class SearchBanner(QWidget):
 
         input_layout = QHBoxLayout()
         input_frame.setLayout(input_layout)
+        input_frame.setObjectName('input_frame')
         input_frame.layout().setContentsMargins(5, 0, 5, 0)
         input_frame.layout().setSpacing(0)
         input_frame.layout().addWidget(self.text_edit)
@@ -77,11 +151,24 @@ class SearchBanner(QWidget):
         # 绑定信号量
         self.text_edit.textChanged.connect(self.__onInputChanged)
         self.text_edit.returnPressed.connect(self.__onSearch)
+        self.text_edit.keyPressEvent = self._onEditKeyPress
 
         self.btn_search.clicked.connect(self.__onSearch)
         self.btn_clear.clicked.connect(self._onClear)
 
         self.locked_input_bar = False
+
+    def _onEditKeyPress(self, event):
+        if not self.index_list_panel.isHidden():
+            end_row = self.index_list_panel.index_list_widget.count() - 1
+            if event.key() == Qt.Key_Up and self.index_list_panel.index_list_widget.currentRow() <= 0:
+                self.index_list_panel.index_list_widget.setCurrentRow(end_row)
+
+            elif event.key() == Qt.Key_Down and self.index_list_panel.index_list_widget.currentRow() >= end_row:
+                self.index_list_panel.index_list_widget.setCurrentRow(0)
+            else:
+                self.index_list_panel.index_list_widget.keyPressEvent(event)
+        QLineEdit.keyPressEvent(self.text_edit, event)
 
     def _onClear(self):
         self.text_edit.clear()
@@ -155,10 +242,10 @@ class SearchBanner(QWidget):
             fast_entrys = self.local_dict.getFastEntry(self.text_edit.text())
             self.index_list_panel.display(fast_entrys)
 
-
         else:
             self.index_list_panel.hide()
             self.btn_clear.hide()
+            self.adjustSize()
 
     def _initShortcut(self):
 

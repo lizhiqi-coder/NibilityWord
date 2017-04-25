@@ -70,7 +70,7 @@ def __build_string_values(dict, namespace):
         buf += '    '
         buf += key
         buf += ' = '
-        buf += "'"
+        buf += "u'"
         buf += str(value.encode('utf-8'))
         buf += "'"
         buf += '\r\n'

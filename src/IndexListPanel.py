@@ -33,6 +33,7 @@ class IndexListPanel(QWidget):
         self.layout().setSpacing(0)
 
         self.index_list_widget = BuddyListWidget()
+        self.index_list_widget.setObjectName('air_frame')
         self.layout().addWidget(self.index_list_widget)
 
     def display(self, dict_result_list):
@@ -43,7 +44,6 @@ class IndexListPanel(QWidget):
             display_data[dict.query] = ''.join(dict.explains)
 
         self.index_list_widget.setData(display_data)
-        # self.index_list_widget.setCurrentRow(0)
 
     def getCurrentKey(self):
         item = self.index_list_widget.currentItem()
