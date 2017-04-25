@@ -16,6 +16,77 @@ from utils import NBUtils
 from src.interface.lingoes.Lingoes import Lingoes
 
 
+class TitleBar(QWidget):
+    TITLE_HEIGHT = 30
+
+    def __init__(self, parent):
+        QWidget.__init__(self, parent)
+
+        self._initUI()
+        self.is_pressed = False
+        self.startPos = None
+
+    def _initUI(self):
+        NBUtils.bindStyleSheet(self, R.qss.title_bar_style)
+        self.titleIcon = QPushButton()
+        self.titleText = QLabel()
+        self.btn_close = QPushButton()
+        self.btn_close.setIcon(QIcon(R.png.close))
+        self.btn_close.setObjectName('btn_function')
+        self.btn_setting = QPushButton()
+        self.btn_setting.setIcon(QIcon(R.png.setting))
+        self.btn_setting.setObjectName('btn_function')
+
+        self.root_layout = QHBoxLayout()
+        self.setLayout(self.root_layout)
+        self.layout().setContentsMargins(0, 0, 0, 0)
+        self.layout().setSpacing(10)
+
+        self.layout().addWidget(self.titleIcon)
+        self.layout().addWidget(self.titleText)
+        self.layout().addWidget(self.btn_setting)
+        self.layout().addWidget(self.btn_close)
+        self.titleText.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.setFixedHeight(self.TITLE_HEIGHT)
+        self.setWindowFlags(Qt.FramelessWindowHint)
+        self.setAttribute(Qt.WA_TranslucentBackground)
+
+        self.btn_close.clicked.connect(self._onClose)
+        self.btn_setting.clicked.connect(self._onSetting)
+
+    def setTitleIcon(self, icon_path):
+        self.titleIcon.setIcon(QIcon(icon_path))
+
+    def setTitleText(self, text):
+        self.titleIcon.setText(text)
+
+    def mousePressEvent(self, event):
+        self.is_pressed = True
+        self.startPos = event.globalPos()
+
+        return QWidget.mousePressEvent(self, event)
+
+    def mouseMoveEvent(self, event):
+        if self.is_pressed:
+            movePos = event.globalPos() - self.startPos
+            widgetPos = self.parentWidget().pos()
+            self.parentWidget().move(widgetPos.x() + movePos.x(),
+                                     widgetPos.y() + movePos.y())
+            self.startPos = event.globalPos()
+        return QWidget.mouseMoveEvent(self, event)
+
+    def mouseReleaseEvent(self, event):
+        self.is_pressed = False
+        return QWidget.mouseReleaseEvent(self, event)
+
+    def _onClose(self):
+        self.parent().close()
+
+    def _onSetting(self):
+        pass
+
+
 class SearchBanner(QWidget):
     def __init__(self):
         super(SearchBanner, self).__init__()
@@ -24,7 +95,6 @@ class SearchBanner(QWidget):
         self.__initInputBar()
         self.__initDetailPanel()
         self.__initListPanel()
-
         self._initShortcut()
 
     def __initTransform(self):
@@ -32,18 +102,21 @@ class SearchBanner(QWidget):
         self.setFixedWidth(self.width())
         self.setMaximumHeight(self.height())
         self.moveByCenter(350, -300)
-        self.setWindowFlags(Qt.WindowCloseButtonHint | Qt.WindowStaysOnTopHint)
+        self.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowStaysOnTopHint)
         NBUtils.bindStyleSheet(self, R.qss.global_style)
 
-    def __initTitle(self):
-        self.setWindowTitle(R.string.app_name_cn)
-        self.setWindowIcon(QIcon(R.png.dict))
-
-    def __initInputBar(self):
         self.root_layout = QVBoxLayout()
-        # self.root_layout.setSizeConstraint(QLayout.SetFixedSize)
         self.root_layout.setAlignment(Qt.AlignTop)
         self.setLayout(self.root_layout)
+        self.layout().setContentsMargins(10, 0, 10, 10)
+
+    def __initTitle(self):
+        self.title_bar = TitleBar(self)
+        self.layout().addWidget(self.title_bar)
+        self.title_bar.setTitleIcon(R.png.dict)
+        self.title_bar.setTitleText(R.string.app_name_cn)
+
+    def __initInputBar(self):
 
         self.text_edit = QLineEdit()
         self.text_edit.setFont(QFont(R.string.Helvetica, R.dimen.text_size_small))

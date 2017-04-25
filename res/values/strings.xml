@@ -3,4 +3,5 @@
     <string name="Helvetica">Helvetica</string>
     <string name="app_name_cn">牛霸词典</string>
     <string name="app_name_en">NiubilityWord</string>
+    <string name="setting_tip">powered by lzq</string>
 </resources>
