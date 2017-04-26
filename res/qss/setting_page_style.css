@@ -1,0 +1,9 @@
+QFrame {
+    border: 1px solid red;
+}
+
+QPushButton {
+    background-color: transparent;
+    border: 1px solid gray;
+    border-radius: 2px;
+}
