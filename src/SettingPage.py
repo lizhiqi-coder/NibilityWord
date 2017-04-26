@@ -21,7 +21,7 @@ class SettingPage(QWidget):
 
     def _initUI(self):
         NBUtils.bindStyleSheet(self, R.qss.setting_page_style)
-        self.setWindowFlags(Qt.WindowCloseButtonHint)
+        self.setWindowFlags(Qt.WindowCloseButtonHint | Qt.WindowStaysOnTopHint)
         self.setFixedWidth(self.SCREEN_WIDTH)
         self.setFixedHeight(self.SCREEN_HEIGHT)
 
@@ -55,6 +55,12 @@ class SettingPage(QWidget):
         calalogue_frame.layout().addWidget(QPushButton('button'))
         calalogue_frame.layout().addWidget(QPushButton('button'))
         calalogue_frame.layout().addWidget(QPushButton('button'))
+
+    def moveByCenter(self, x, y):
+        rect = self.frameGeometry()
+        self.center_point = QDesktopWidget().availableGeometry().center()
+        rect.moveCenter(self.center_point + QPoint(x, y))
+        self.move(rect.topLeft())
 
 
 if __name__ == '__main__':

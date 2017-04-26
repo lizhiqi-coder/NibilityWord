@@ -14,6 +14,7 @@ from IndexListPanel import IndexListPanel
 from res import R
 from utils import NBUtils
 from src.interface.lingoes.Lingoes import Lingoes
+from src.SettingPage import SettingPage
 
 
 class TitleBar(QWidget):
@@ -23,8 +24,12 @@ class TitleBar(QWidget):
         QWidget.__init__(self, parent)
 
         self._initUI()
+        self._initSetting()
         self.is_pressed = False
         self.startPos = None
+
+    def _initSetting(self):
+        self.setting = SettingPage()
 
     def _initUI(self):
         NBUtils.bindStyleSheet(self, R.qss.title_bar_style)
@@ -88,6 +93,9 @@ class TitleBar(QWidget):
         self.parent().close()
 
     def _onSetting(self):
+        self.setting.show()
+        self.setting.moveByCenter(0, 0)
+
         pass
 
 
@@ -193,7 +201,6 @@ class SearchBanner(QWidget):
         self.center_point = QDesktopWidget().availableGeometry().center()
         rect.moveCenter(self.center_point + QPoint(x, y))
         self.move(rect.topLeft())
-        pass
 
     def __onSearch(self):
         print '__onSearch'
