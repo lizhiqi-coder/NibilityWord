@@ -23,6 +23,12 @@ def main():
     mainBanner.show()
     trayIcon.show()
     trayIcon.activated.connect(mainBanner.show)
+
+    quitAction = QAction(R.string.quit, mainBanner, triggered=qApp.quit)
+    trayMenu = QMenu(mainBanner)
+    trayMenu.addAction(quitAction)
+    trayIcon.setContextMenu(trayMenu)
+
     sys.exit(app.exec_())
     pass
 

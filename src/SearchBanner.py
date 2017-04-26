@@ -90,7 +90,7 @@ class TitleBar(QWidget):
         return QWidget.mouseReleaseEvent(self, event)
 
     def _onClose(self):
-        self.parent().close()
+        self.parent().hide()
 
     def _onSetting(self):
         self.setting.show()
