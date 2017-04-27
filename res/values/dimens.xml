@@ -4,5 +4,6 @@
     <!-- conversation list -->
     <dimen name="text_size_small">12</dimen>
     <dimen name="text_size_big">24</dimen>
+    <dimen name="text_size_middle">18</dimen>
 
 </resources>

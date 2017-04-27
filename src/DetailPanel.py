@@ -33,6 +33,7 @@ class DetailPanel(QWidget):
 
         font = QFont()
         font.setBold(True)
+        font.setFamily(R.string.font_songti)
         font.setPixelSize(R.dimen.text_size_big)
         self.head_name.setFont(font)
         self.head_bar.layout().addWidget(self.head_name)
@@ -54,18 +55,28 @@ class DetailPanel(QWidget):
 
     def _initMeaningListBar(self):
         self.meaning_list_bar = BuddyListWidget()
-        # self.meaning_list_bar.setData({})
+        self.meaning_list_bar.setObjectName('air_frame')
+        self.meaning_list_bar.setViewportMargins(10, 10, 10, 0)
+
         pass
 
     def __initOtherBar(self):
         self.other_bar = QFrame()
         pass
 
+    def _initWebBar(self):
+        self.web_bar = QFrame()
+
+    def _initAdvBar(self):
+        self.adv_var = QFrame()
+
     def __initUI(self):
         NBUtils.bindStyleSheet(self, R.qss.global_style)
         self._initHead()
         self.__initPhoneBar()
         self._initMeaningListBar()
+        self._initWebBar()
+        self._initAdvBar()
         self.__initOtherBar()
 
         self.root_layout = QVBoxLayout()
@@ -163,6 +174,9 @@ class PhItem(QFrame):
 
         self.lb_title = QLabel(u'英/美')
         self.lb_ph_symbol = QLabel(u'[音标]')
+        self.lb_title.setObjectName('PhItem')
+        self.lb_ph_symbol.setObjectName('PhItem')
+
         self.btn_sound = QPushButton()
         self.btn_sound.setIcon(QIcon(R.png.sound))
         ph_item_layout.addWidget(self.lb_title)

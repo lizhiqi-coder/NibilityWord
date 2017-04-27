@@ -35,6 +35,8 @@ class TitleBar(QWidget):
         NBUtils.bindStyleSheet(self, R.qss.title_bar_style)
         self.titleIcon = QPushButton()
         self.titleText = QLabel()
+        self.titleText.setFont(QFont(R.string.font_Helvetica, R.dimen.text_size_middle))
+
         self.btn_close = QPushButton()
         self.btn_close.setIcon(QIcon(R.png.close))
         self.btn_close.setObjectName('btn_function')
@@ -131,7 +133,7 @@ class SearchBanner(QWidget):
     def __initInputBar(self):
 
         self.text_edit = QLineEdit()
-        self.text_edit.setFont(QFont(R.string.Helvetica, R.dimen.text_size_small))
+        self.text_edit.setFont(QFont(R.string.font_Helvetica, R.dimen.text_size_small))
         self.text_edit.setFixedHeight(35)
         self.text_edit.setFocus()
         self.btn_search = QPushButton()

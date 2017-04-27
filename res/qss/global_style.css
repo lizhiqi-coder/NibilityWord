@@ -23,14 +23,13 @@ QLineEdit {
 
 /*frame*/
 QFrame {
-    border: 1px solid gray;
-    border-radius: 5px;
     background-color: transparent;
 }
 
 QFrame#input_frame {
-    border: 1px solid gray;
-    background-color: lightgray;
+    border-radius: 5px;
+    border: 1px solid floralwhite;
+    background-color: whitesmoke;
 }
 
 QFrame#air_frame {
@@ -39,8 +38,8 @@ QFrame#air_frame {
 
 /*label*/
 QLabel {
-    border: 1px solid gray;
-    background-color: lightgray;
+    border: 0px solid gray;
+    background-color: transparent;
 }
 
 QLabel#key_label {
@@ -54,5 +53,10 @@ QLabel#value_label {
     background-color: transparent;
     font-size: 14px;
     color: gray;
+
 }
 
+QLabel#PhItem {
+    font-size: 16px;
+    color: darkgrey;
+}
