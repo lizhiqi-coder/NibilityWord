@@ -253,11 +253,12 @@ class SearchBanner(QWidget):
             return
         self.detail_panel.hide()
         if self.text_edit.text() != '' and not NBUtils.containsChinese(self.text_edit.text()):
-            self.index_list_panel.show()
             self.btn_clear.show()
 
             fast_entrys = self.local_dict.getFastEntry(self.text_edit.text())
             self.index_list_panel.display(fast_entrys)
+            self.index_list_panel.show()
+
 
         else:
             self.index_list_panel.hide()
