@@ -28,14 +28,10 @@ class DetailPanel(QWidget):
         self.head_bar = QFrame()
         self.head_bar.setLayout(QHBoxLayout())
         self.head_bar.layout().setAlignment(Qt.AlignLeft)
-        self.head_name = QLabel('head')
+        self.head_name = QLabel()
+        self.head_name.setObjectName('detail_head')
         self.head_name.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)
 
-        font = QFont()
-        font.setBold(True)
-        font.setFamily(R.string.font_songti)
-        font.setPixelSize(R.dimen.text_size_big)
-        self.head_name.setFont(font)
         self.head_bar.layout().addWidget(self.head_name)
 
     def __initPhoneBar(self):

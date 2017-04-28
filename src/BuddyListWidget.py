@@ -57,4 +57,4 @@ class BuddyListWidget(QListWidget):
             self.layout().addWidget(key_lb)
             self.layout().addWidget(value_lb)
             key_lb.adjustSize()
-            key_lb.setFixedWidth(key_lb.width() + 1)
+            key_lb.setFixedWidth(key_lb.width() + 3)

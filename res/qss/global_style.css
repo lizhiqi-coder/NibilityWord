@@ -56,7 +56,16 @@ QLabel#value_label {
 
 }
 
+QLabel#detail_head {
+    font-weight: bold;
+    font-size: 24px;
+    font-family: Tahoma;
+}
+
 QLabel#PhItem {
     font-size: 16px;
     color: darkgrey;
+    font-family: Lucida Sans Unicode;
 }
+
+
