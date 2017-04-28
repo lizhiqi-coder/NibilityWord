@@ -10,7 +10,13 @@ import sys
 from res import R
 from utils import NBUtils
 
+"""
 
+我的词典
+快捷按键
+关于我们
+检查更新
+"""
 class SettingPage(QWidget):
     SCREEN_WIDTH = 700
     SCREEN_HEIGHT = 430
