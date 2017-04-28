@@ -7,3 +7,12 @@ QPushButton {
     border: 1px solid gray;
     border-radius: 2px;
 }
+
+CatalogButton:hover {
+    color: gray;
+}
+
+CatalogButton:checked {
+    color: green;
+}
+

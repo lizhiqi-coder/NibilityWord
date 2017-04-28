@@ -9,4 +9,10 @@
     <string name="setting_tip">powered by lzq</string>
     <string name="setting">设置</string>
     <string name="quit">退出</string>
+
+    <string name="my_dict">我的词典</string>
+    <string name="shortcut">快捷按键</string>
+    <string name="about_me">关于我们</string>
+    <string name="check_update">检查更新</string>
+
 </resources>
