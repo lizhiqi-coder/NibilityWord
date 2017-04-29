@@ -81,7 +81,7 @@ class SettingPage(QWidget):
 
     def initContent(self):
         self.pannel_about_me = QLabel(NBUtils.parseHtml(R.html.about_me_content))
-        self.pannel_about_me.setAlignment(Qt.AlignCenter)
+        self.pannel_about_me.setAlignment(Qt.AlignTop|Qt.AlignHCenter)
         # self.pannel_about_me.setWordWrap(True)
         self.content_frame.layout().addWidget(self.pannel_about_me)
 

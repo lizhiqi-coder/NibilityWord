@@ -3,6 +3,9 @@ QFrame{
 }
 QFrame#content_frame {
     border-left: 0px;
+    background-color: white;
+    margin: 0px;
+    spacing:0px;
 }
 
 QPushButton {
@@ -18,4 +21,6 @@ CatalogButton:hover {
 CatalogButton:checked {
     color: green;
 }
-
+QLabel {
+    border: 0px;
+}
