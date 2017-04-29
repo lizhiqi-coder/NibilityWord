@@ -27,6 +27,15 @@ def __search_qss():
     return result
 
 
+def _search_html():
+    current_dir = os.path.abspath('.')
+    result = []
+    for root, sub_dirs, files in os.walk(current_dir):
+        for file in files:
+            if file.endswith('.html'):
+                result.append(os.path.join(root, file))
+    return result
+
 def __build_image_indexing(index_list, namespace):
     buf = '#coding:utf-8\r\n'
     buf += 'class ' + namespace + '():'
@@ -133,6 +142,9 @@ def start():
 
     qss_paths = __search_qss()
     buf += __build_file_indexing(qss_paths, namespace='qss')
+
+    html_paths = _search_html()
+    buf += __build_file_indexing(html_paths, namespace='html')
     __write_to_file(buf, R_file_path)
 
 

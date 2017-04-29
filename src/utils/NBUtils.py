@@ -48,3 +48,10 @@ def getRootDir():
         if dir == temp_dir:
             return None
     return dir
+
+
+def parseHtml(html_path):
+    html_file = open(html_path, 'r')
+    result = html_file.read()
+    html_file.close()
+    return result

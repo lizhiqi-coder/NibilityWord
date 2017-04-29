@@ -80,7 +80,7 @@ class SettingPage(QWidget):
         catalogue_frame.layout().addWidget(self.btn_check_update)
 
     def initContent(self):
-        self.pannel_about_me = QLabel("about me\n hahha")
+        self.pannel_about_me = QLabel(NBUtils.parseHtml(R.html.about_me_content))
         self.pannel_about_me.setAlignment(Qt.AlignCenter)
         # self.pannel_about_me.setWordWrap(True)
         self.content_frame.layout().addWidget(self.pannel_about_me)
