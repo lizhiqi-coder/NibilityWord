@@ -1,5 +1,8 @@
-QFrame {
-    border: 1px solid red;
+QFrame{
+    border: 1px solid gray;
+}
+QFrame#content_frame {
+    border-left: 0px;
 }
 
 QPushButton {

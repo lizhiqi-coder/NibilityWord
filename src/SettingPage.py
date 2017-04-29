@@ -44,9 +44,11 @@ class SettingPage(QWidget):
         self.layout().setSpacing(0)
 
         catalogue_frame = QFrame()
+        catalogue_frame.setObjectName('catalogue_frame')
         # catalogue_frame.setFixedWidth(self.SCREEN_WIDTH / 6+30)
         catalogue_frame.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Expanding)
         self.content_frame = QFrame()
+        self.content_frame.setObjectName('content_frame')
         self.content_frame.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 
         self.layout().addWidget(catalogue_frame)
@@ -66,6 +68,7 @@ class SettingPage(QWidget):
         self.btn_about_me = CatalogButton(R.string.about_me)
         self.btn_check_update = CatalogButton(R.string.check_update)
 
+        self.btn_about_me.setChecked(True)
         self.btn_my_dict.toggled.connect(lambda: self.onBtnChecked(self.btn_my_dict, 1))
         self.btn_shortcut.toggled.connect(lambda: self.onBtnChecked(self.btn_shortcut, 2))
         self.btn_about_me.toggled.connect(lambda: self.onBtnChecked(self.btn_about_me, 3))
@@ -77,7 +80,9 @@ class SettingPage(QWidget):
         catalogue_frame.layout().addWidget(self.btn_check_update)
 
     def initContent(self):
-        self.pannel_about_me = QLabel("about me")
+        self.pannel_about_me = QLabel("about me\n hahha")
+        self.pannel_about_me.setAlignment(Qt.AlignCenter)
+        # self.pannel_about_me.setWordWrap(True)
         self.content_frame.layout().addWidget(self.pannel_about_me)
 
     def moveByCenter(self, x, y):
