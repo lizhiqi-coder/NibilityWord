@@ -19,7 +19,7 @@
 * pygame(用于音频播放)
 * multiprocessing (用于实现守护进程)
 * [pyhook(window平台快捷键设置)]
-* JPype:调用lingoes词典解析核心算法
+* py2exe 用于打包exe文件
 
 ##参考资料：
 * 本地离线词典使用lingoes格式:http://www.cnblogs.com/SuperBrothers/archive/2012/11/24/2785971.html

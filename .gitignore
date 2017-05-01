@@ -5,3 +5,5 @@ R.py
 *.ld2
 *.ldx
 *.cooked
+/dist
+/build
