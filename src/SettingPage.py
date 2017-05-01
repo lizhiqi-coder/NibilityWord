@@ -79,9 +79,8 @@ class SettingPage(QWidget):
         catalogue_frame.layout().addWidget(self.btn_about_me)
 
     def initContent(self):
-        pannel_about_me = QLabel(NBUtils.parseHtml(R.html.about_me_content))
-        pannel_about_me.setAlignment(Qt.AlignTop | Qt.AlignHCenter)
-        # self.pannel_about_me.setWordWrap(True)
+        pannel_about_me = QTextEdit(NBUtils.parseHtml(R.html.about_me_content))
+        pannel_about_me.setReadOnly(True)
 
         to_do01 = QLabel(NBUtils.parseHtml(R.html.to_do))
         to_do01.setAlignment(Qt.AlignCenter)

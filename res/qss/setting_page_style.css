@@ -24,3 +24,6 @@ CatalogButton:checked {
 QLabel {
     border: 0px;
 }
+QTextEdit{
+    border: 0px;
+}
