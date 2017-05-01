@@ -281,7 +281,10 @@ class SearchBanner(QWidget):
 
     def onTrayActivated(self, reason):
         if reason == QSystemTrayIcon.Trigger:
-            self.show()
+            if self.isHidden():
+                self.show()
+            else:
+                self.hide()
         if reason == QSystemTrayIcon.DoubleClick:
             pass
 
