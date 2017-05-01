@@ -14,9 +14,10 @@ from res import RCreater
 try:
     if RCreater.start():
         from res import R
-        from src.SearchBanner import SearchBanner
+        # from src.SearchBanner import SearchBanner
 except Exception, e:
     print e
+from src.SearchBanner import SearchBanner
 
 
 def main():

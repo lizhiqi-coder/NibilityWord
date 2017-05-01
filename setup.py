@@ -1,8 +1,8 @@
 # coding=utf-8
 from distutils.core import setup
-import py2exe
+import py2exe  # 必须要有，不然命令行编译不过
 
-includes = ['sip']
+includes = []
 data_files = ['main.py']
 options = {
     "py2exe":
@@ -11,8 +11,8 @@ options = {
             "compressed": 1,
             "optimize": 2,
             "ascii": 0,
-            "bundle_files": 1,
-            "dll_excludes": ["MSVCP90.dll", "numpy-atlas.dll"]
+            # "bundle_files": 1, 64 位系统会有问题
+            "dll_excludes": ["MSVCP90.dll", "numpy-atlas.dll", "w9xpopen.exe"]
 
         }
 }
