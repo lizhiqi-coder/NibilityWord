@@ -2,8 +2,6 @@
 
 import sys
 
-from src.SearchBanner import SearchBanner
-
 try:
     from PySide.QtCore import *
     from PySide.QtGui import *
@@ -11,7 +9,14 @@ except ImportError:
     from PyQt4.QtCore import *
     from PyQt4.QtGui import *
 
-from res import R
+from res import RCreater
+
+try:
+    if RCreater.start():
+        from res import R
+        from src.SearchBanner import SearchBanner
+except Exception, e:
+    print e
 
 
 def main():

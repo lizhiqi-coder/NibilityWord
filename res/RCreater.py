@@ -2,11 +2,14 @@
 import os
 import xml.etree.ElementTree as ET
 
-R_file_path = './R.py'
+from src.utils import NBUtils
+
+CURRENT_DIR = os.path.join(NBUtils.getRootDir(), "res" + os.path.sep)
+R_file_path = os.path.join(CURRENT_DIR, 'R.py')
 
 
 def __search_image():
-    current_dir = os.path.abspath('.')
+    current_dir = CURRENT_DIR
     result = []
     for root, sub_dirs, files in os.walk(current_dir):
         for file in files:
@@ -17,7 +20,7 @@ def __search_image():
 
 
 def __search_qss():
-    current_dir = os.path.abspath('.')
+    current_dir = CURRENT_DIR
     result = []
     for root, sub_dirs, files in os.walk(current_dir):
         for file in files:
@@ -28,13 +31,14 @@ def __search_qss():
 
 
 def _search_html():
-    current_dir = os.path.abspath('.')
+    current_dir = CURRENT_DIR
     result = []
     for root, sub_dirs, files in os.walk(current_dir):
         for file in files:
             if file.endswith('.html'):
                 result.append(os.path.join(root, file))
     return result
+
 
 def __build_image_indexing(index_list, namespace):
     buf = '#coding:utf-8\r\n'
@@ -134,10 +138,10 @@ def start():
 
     buf = __build_image_indexing(index_list=image_paths, namespace='png')
 
-    string_dict = __parse_xml_values('./values/strings.xml', 'string')
+    string_dict = __parse_xml_values(os.path.join(CURRENT_DIR, 'values/strings.xml'), 'string')
     buf += __build_string_values(string_dict, namespace='string')
 
-    int_dict = __parse_xml_values('./values/dimens.xml', 'dimen')
+    int_dict = __parse_xml_values(os.path.join(CURRENT_DIR, 'values/dimens.xml'), 'dimen')
     buf += __build_int_values(int_dict, namespace='dimen')
 
     qss_paths = __search_qss()
@@ -147,7 +151,10 @@ def start():
     buf += __build_file_indexing(html_paths, namespace='html')
     __write_to_file(buf, R_file_path)
 
+    print "R create succeed !"
+
+    return True
+
 
 if __name__ == '__main__':
     start()
-    print "R create succeed !"
