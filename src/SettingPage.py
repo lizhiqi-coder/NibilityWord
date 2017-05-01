@@ -55,7 +55,7 @@ class SettingPage(QWidget):
         self.layout().addWidget(self.content_frame)
 
         left_layout = QVBoxLayout()
-        right_layout = QVBoxLayout()
+        right_layout = QStackedLayout()
         catalogue_frame.setLayout(left_layout)
         self.content_frame.setLayout(right_layout)
 
@@ -65,25 +65,36 @@ class SettingPage(QWidget):
 
         self.btn_my_dict = CatalogButton(R.string.my_dict)
         self.btn_shortcut = CatalogButton(R.string.shortcut)
-        self.btn_about_me = CatalogButton(R.string.about_me)
         self.btn_check_update = CatalogButton(R.string.check_update)
+        self.btn_about_me = CatalogButton(R.string.about_me)
 
-        self.btn_about_me.setChecked(True)
-        self.btn_my_dict.toggled.connect(lambda: self.onBtnChecked(self.btn_my_dict, 1))
-        self.btn_shortcut.toggled.connect(lambda: self.onBtnChecked(self.btn_shortcut, 2))
+        self.btn_my_dict.toggled.connect(lambda: self.onBtnChecked(self.btn_my_dict, 0))
+        self.btn_shortcut.toggled.connect(lambda: self.onBtnChecked(self.btn_shortcut, 1))
+        self.btn_check_update.toggled.connect(lambda: self.onBtnChecked(self.btn_check_update, 2))
         self.btn_about_me.toggled.connect(lambda: self.onBtnChecked(self.btn_about_me, 3))
-        self.btn_check_update.toggled.connect(lambda: self.onBtnChecked(self.btn_check_update, 4))
 
         catalogue_frame.layout().addWidget(self.btn_my_dict)
         catalogue_frame.layout().addWidget(self.btn_shortcut)
-        catalogue_frame.layout().addWidget(self.btn_about_me)
         catalogue_frame.layout().addWidget(self.btn_check_update)
+        catalogue_frame.layout().addWidget(self.btn_about_me)
 
     def initContent(self):
-        self.pannel_about_me = QLabel(NBUtils.parseHtml(R.html.about_me_content))
-        self.pannel_about_me.setAlignment(Qt.AlignTop|Qt.AlignHCenter)
+        pannel_about_me = QLabel(NBUtils.parseHtml(R.html.about_me_content))
+        pannel_about_me.setAlignment(Qt.AlignTop | Qt.AlignHCenter)
         # self.pannel_about_me.setWordWrap(True)
-        self.content_frame.layout().addWidget(self.pannel_about_me)
+
+        to_do01 = QLabel(NBUtils.parseHtml(R.html.to_do))
+        to_do01.setAlignment(Qt.AlignCenter)
+        to_do02 = QLabel(NBUtils.parseHtml(R.html.to_do))
+        to_do02.setAlignment(Qt.AlignCenter)
+        pannel_check_update = QLabel(NBUtils.parseHtml(R.html.check_update))
+        pannel_check_update.setAlignment(Qt.AlignCenter)
+
+        self.content_frame.layout().addWidget(to_do01)
+        self.content_frame.layout().addWidget(to_do02)
+        self.content_frame.layout().addWidget(pannel_check_update)
+        self.content_frame.layout().addWidget(pannel_about_me)
+        self.btn_about_me.setChecked(True)
 
     def moveByCenter(self, x, y):
         rect = self.frameGeometry()
@@ -93,15 +104,7 @@ class SettingPage(QWidget):
 
     def onBtnChecked(self, btn, btn_id):
         if btn.isChecked():
-
-            if btn_id == 1:
-                print 1
-            elif btn_id == 2:
-                print 2
-            elif btn_id == 3:
-                self.pannel_about_me.show()
-            elif btn_id == 4:
-                print 4
+            self.content_frame.layout().setCurrentIndex(btn_id)
 
 
 class CatalogButton(QRadioButton):
