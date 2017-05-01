@@ -27,7 +27,7 @@ def main():
 
     mainBanner.show()
     trayIcon.show()
-    trayIcon.activated.connect(mainBanner.show)
+    trayIcon.activated.connect(mainBanner.onTrayActivated)
 
     quitAction = QAction(R.string.quit, mainBanner, triggered=qApp.quit)
     trayMenu = QMenu(mainBanner)
