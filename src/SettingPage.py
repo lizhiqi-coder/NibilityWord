@@ -10,14 +10,6 @@ import sys
 from res import R
 from utils import NBUtils
 
-"""
-
-我的词典
-快捷按键
-关于我们
-检查更新
-"""
-
 
 class SettingPage(QWidget):
     SCREEN_WIDTH = 700
@@ -84,13 +76,13 @@ class SettingPage(QWidget):
 
         to_do01 = QLabel(NBUtils.parseHtml(R.html.to_do))
         to_do01.setAlignment(Qt.AlignCenter)
-        shortcut_content = QLabel(NBUtils.parseHtml(R.html.shortcut_content))
-        shortcut_content.setAlignment(Qt.AlignCenter)
+        pannel_shortcut = QLabel(NBUtils.parseHtml(R.html.shortcut_content))
+        pannel_shortcut.setAlignment(Qt.AlignCenter)
         pannel_check_update = QLabel(NBUtils.parseHtml(R.html.check_update))
         pannel_check_update.setAlignment(Qt.AlignCenter)
 
         self.content_frame.layout().addWidget(to_do01)
-        self.content_frame.layout().addWidget(shortcut_content)
+        self.content_frame.layout().addWidget(pannel_shortcut)
         self.content_frame.layout().addWidget(pannel_check_update)
         self.content_frame.layout().addWidget(pannel_about_me)
         self.btn_about_me.setChecked(True)
