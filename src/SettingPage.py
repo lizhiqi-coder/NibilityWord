@@ -84,13 +84,13 @@ class SettingPage(QWidget):
 
         to_do01 = QLabel(NBUtils.parseHtml(R.html.to_do))
         to_do01.setAlignment(Qt.AlignCenter)
-        to_do02 = QLabel(NBUtils.parseHtml(R.html.to_do))
-        to_do02.setAlignment(Qt.AlignCenter)
+        shortcut_content = QLabel(NBUtils.parseHtml(R.html.shortcut_content))
+        shortcut_content.setAlignment(Qt.AlignCenter)
         pannel_check_update = QLabel(NBUtils.parseHtml(R.html.check_update))
         pannel_check_update.setAlignment(Qt.AlignCenter)
 
         self.content_frame.layout().addWidget(to_do01)
-        self.content_frame.layout().addWidget(to_do02)
+        self.content_frame.layout().addWidget(shortcut_content)
         self.content_frame.layout().addWidget(pannel_check_update)
         self.content_frame.layout().addWidget(pannel_about_me)
         self.btn_about_me.setChecked(True)
