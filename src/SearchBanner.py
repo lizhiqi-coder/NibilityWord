@@ -272,6 +272,11 @@ class SearchBanner(QWidget):
         show_win_action.triggered.connect(self._onShowWinAction)
         self.insertAction(show_win_action, show_win_action)
 
+        clear_action = QAction(self)
+        clear_action.setShortcut(QKeySequence(Qt.SHIFT + Qt.CTRL + Qt.Key_L))
+        clear_action.triggered.connect(self._onClear)
+        self.insertAction(clear_action, clear_action)
+
     def _onShowWinAction(self):
         print '_onShowWinAction'
         if self.isHidden():
