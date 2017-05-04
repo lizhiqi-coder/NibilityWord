@@ -58,14 +58,20 @@ class InputDeviceManager():
             # linux 平台
             try:
                 from evdev import InputDevice
-                from select import select
+                import threading
             except:
                 pass
-            dev = InputDevice('/dev/input/event0')
-            while True:
-                select([dev], [], [])
-                for event in dev.read():
-                    self._onKeyEvent(event)
+            self.dev = InputDevice('/dev/input/event0')
+            work = threading.Thread(target=self._listening)
+            work.setDaemon(True)
+            work.start()
+
+    def _listening(self):
+        from select import select
+        while True:
+            select([self.dev], [], [])
+            for event in self.dev.read():
+                self._onKeyEvent(event)
 
     # 目前就支持两个组合键
     def addShortcut(self, shortcut_name, runnable):

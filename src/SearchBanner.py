@@ -15,6 +15,7 @@ from res import R
 from utils import NBUtils
 from src.interface.lingoes.Lingoes import Lingoes
 from src.SettingPage import SettingPage
+from utils.InputDeviceManager import *
 
 
 class TitleBar(QWidget):
@@ -267,10 +268,12 @@ class SearchBanner(QWidget):
 
     def _initShortcut(self):
 
-        show_win_action = QAction(self)
-        show_win_action.setShortcut(QKeySequence(Qt.ALT + Qt.Key_F))
-        show_win_action.triggered.connect(self._onShowWinAction)
-        self.insertAction(show_win_action, show_win_action)
+        # show_win_action = QAction(self)
+        # show_win_action.setShortcut(QKeySequence(Qt.ALT + Qt.Key_F))
+        # show_win_action.triggered.connect(self._onShowWinAction)
+        # self.insertAction(show_win_action, show_win_action)
+
+        InputDeviceManager.getInstance().addShortcut((KEY_ALT, KEY_F), runnable=self._onShowWinAction)
 
         clear_action = QAction(self)
         clear_action.setShortcut(QKeySequence(Qt.SHIFT + Qt.CTRL + Qt.Key_L))
