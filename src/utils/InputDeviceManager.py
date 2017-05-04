@@ -5,6 +5,21 @@ import threading
 
 import NBUtils
 
+"""
+/dev/input
+event0:keyboard
+event2:mouse
+event4:touch pad
+
+"""
+KEY_CTRL = 29
+KEY_ALT = 56
+KET_SHIFT = 42
+KEY_SPACE = 57
+control_keys = [KEY_ALT, KEY_CTRL, KET_SHIFT, KEY_SPACE]
+
+KEY_F = 33
+
 
 class InputDeviceManager():
     _INSTANCE = None
@@ -23,6 +38,9 @@ class InputDeviceManager():
         return InputDeviceManager._INSTANCE
 
     def __init__(self):
+        self.SHOETCUT_MAPS = {}
+        self.first_key_down = False
+        self.first_key = -1
         if NBUtils.getPlatform() == NBUtils.PLATFROM_WINDOWS:
             try:
                 import pyHook
@@ -43,27 +61,43 @@ class InputDeviceManager():
                 from select import select
             except:
                 pass
-            dev = InputDevice('/dev/input/event4')
-            mice=InputDevice
+            dev = InputDevice('/dev/input/event0')
             while True:
                 select([dev], [], [])
                 for event in dev.read():
-                    if (event.value == 1) and event.code != 0:
-                        # print "key %s: " % (event.code)
-                        self._onKeyEvent(event)
-
-        self.SHOETCUT_MAP = {}
-        pass
+                    self._onKeyEvent(event)
 
     # 目前就支持两个组合键
-    def setShortcut(self, shortcut_name, runnable):
-        self.SHOETCUT_MAP[shortcut_name] = runnable
+    def addShortcut(self, shortcut_name, runnable):
+        self.SHOETCUT_MAPS[shortcut_name] = runnable
 
     def _onKeyEvent(self, event):
         if NBUtils.getPlatform() == NBUtils.PLATFROM_WINDOWS:
             print str(event.KeyID)
         else:
             print 'key  %s, value %s' % (event.code, event.value)
+            if self.first_key_down and event.value == 1:
+                for key_map in self.SHOETCUT_MAPS:
+                    if self.first_key == key_map[0]:  # 命中第一个按键
+                        if event.code == key_map[1]:
+                            runnable = self.SHOETCUT_MAPS[key_map]
+                            runnable()
+
+            if event.code in control_keys and event.value == 1:
+                self.first_key_down = True
+                self.first_key = event.code
+            if event.code in control_keys and event.value == 0:
+                self.first_key_down = False
+                self.first_key = -1
 
     def _onMouseEvent(self, event):
         pass
+
+
+def run():
+    print 'run'
+
+
+if __name__ == "__main__":
+    InputDeviceManager.getInstance().addShortcut((KEY_ALT, KEY_F), runnable=run)
+    pass
