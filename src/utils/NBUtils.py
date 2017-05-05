@@ -18,15 +18,15 @@ def bindStyleSheet(ref, style_sheet):
     ref.setStyleSheet(static_style_sheet)
 
 
-PLATFROM_WINDOWS = 'windows'
-PLATFROM_LINUX = 'linux'
+PLATFROM_WINDOWS = 'Windows'
+PLATFROM_LINUX = 'Linux'
 
 
 def getPlatform():
     if platform.system() == PLATFROM_WINDOWS:
         return PLATFROM_WINDOWS
     else:
-        PLATFROM_LINUX
+        return PLATFROM_LINUX
 
 
 def containsChinese(str):
@@ -55,3 +55,7 @@ def parseHtml(html_path):
     result = html_file.read()
     html_file.close()
     return unicode(result, 'utf-8')
+
+
+if __name__ == '__main__':
+    print getPlatform()
