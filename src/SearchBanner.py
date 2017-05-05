@@ -128,7 +128,7 @@ class SearchBanner(QWidget):
     def __initTitle(self):
         self.title_bar = TitleBar(self)
         self.layout().addWidget(self.title_bar)
-        self.title_bar.setTitleIcon(R.png.dict)
+        self.title_bar.setTitleIcon(R.png.app_icon)
         self.title_bar.setTitleText(R.string.app_name_cn)
 
     def __initInputBar(self):

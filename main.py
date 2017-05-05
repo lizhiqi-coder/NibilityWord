@@ -24,7 +24,7 @@ def main():
     app = QApplication(sys.argv)
     mainBanner = SearchBanner()
     trayIcon = QSystemTrayIcon()
-    trayIcon.setIcon(QIcon(R.png.dict))
+    trayIcon.setIcon(QIcon(R.png.tray_icon))
 
     mainBanner.show()
     trayIcon.show()
