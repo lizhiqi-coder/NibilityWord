@@ -11,10 +11,16 @@ try:
 except:
     pass
 try:
-    from evdev import InputDevice
+    from evdev import InputDevice, InputEvent
     from select import select
 except:
     pass
+
+try:
+    from PySide.QtCore import *
+except ImportError:
+    from PyQt4.QtCore import *
+
 """
 /dev/input
 event0:keyboard
@@ -31,26 +37,22 @@ control_keys = [KEY_ALT, KEY_CTRL, KET_SHIFT, KEY_SPACE]
 KEY_F = 33
 
 
-class InputDeviceManager():
+class InputDeviceManager(QObject):
     _INSTANCE = None
+    sin = Signal(InputEvent)
 
     @staticmethod
     def getInstance():
-        return InputDeviceManager()
-
-    def __new__(cls, *args, **kwargs):
-        if not InputDeviceManager._INSTANCE:
-            try:
-                threading.Lock().acquire()
-                InputDeviceManager._INSTANCE = super(InputDeviceManager, cls).__init__()
-            finally:
-                threading.Lock().release()
+        if InputDeviceManager._INSTANCE == None:
+            InputDeviceManager._INSTANCE = InputDeviceManager()
         return InputDeviceManager._INSTANCE
 
     def __init__(self):
+        super(InputDeviceManager, self).__init__()
         self.SHOETCUT_MAPS = {}
         self.first_key_down = False
         self.first_key = -1
+        self.sin.connect(self._onKeyEvent)
         if NBUtils.getPlatform() == NBUtils.PLATFROM_WINDOWS:
             self.hm = pyHook.HookManager()
             self.hm.KeyDown = self._onKeyEvent
@@ -75,13 +77,17 @@ class InputDeviceManager():
         while True:
             select([self.dev], [], [])
             for event in self.dev.read():
-                self._onKeyEvent(event)
+                self.sin.emit(event)
 
     # 目前就支持两个组合键
     def addShortcut(self, shortcut_name, runnable):
         self.SHOETCUT_MAPS[shortcut_name] = runnable
 
+    @Slot()
     def _onKeyEvent(self, event):
+        """
+        该方法应该放到主线程中执行
+        """
         if NBUtils.getPlatform() == NBUtils.PLATFROM_WINDOWS:
             print str(event.KeyID)
         else:
