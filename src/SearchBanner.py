@@ -281,7 +281,6 @@ class SearchBanner(QWidget):
         self.insertAction(clear_action, clear_action)
 
     def _onShowWinAction(self):
-        print '_onShowWinAction'
         if self.isHidden():
             self.show()
         else:

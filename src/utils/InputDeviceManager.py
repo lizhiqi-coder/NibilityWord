@@ -91,7 +91,6 @@ class InputDeviceManager(QObject):
         if NBUtils.getPlatform() == NBUtils.PLATFROM_WINDOWS:
             print str(event.KeyID)
         else:
-            print 'key  %s, value %s' % (event.code, event.value)
             if self.first_key_down and event.value == 1:
                 for key_map in self.SHOETCUT_MAPS:
                     if self.first_key == key_map[0]:  # 命中第一个按键
