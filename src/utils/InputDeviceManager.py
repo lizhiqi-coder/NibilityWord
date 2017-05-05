@@ -5,6 +5,16 @@ import threading
 
 import NBUtils
 
+try:
+    import pyHook
+    import pythoncom
+except:
+    pass
+try:
+    from evdev import InputDevice
+    from select import select
+except:
+    pass
 """
 /dev/input
 event0:keyboard
@@ -42,32 +52,26 @@ class InputDeviceManager():
         self.first_key_down = False
         self.first_key = -1
         if NBUtils.getPlatform() == NBUtils.PLATFROM_WINDOWS:
-            try:
-                import pyHook
-                import pythoncom
-            except:
-                pass
             self.hm = pyHook.HookManager()
             self.hm.KeyDown = self._onKeyEvent
             self.hm.mouse_hook = self._onMouseEvent
             self.hm.HookKeyboard()
             self.hm.HookMouse()
-            pythoncom.PumpMessages()
+            work = threading.Thread(target=self._listening_w)
+            work.setDaemon(True)
+            work.start()
 
         else:
             # linux 平台
-            try:
-                from evdev import InputDevice
-                import threading
-            except:
-                pass
             self.dev = InputDevice('/dev/input/event0')
             work = threading.Thread(target=self._listening)
             work.setDaemon(True)
             work.start()
 
+    def _listening_w(self):
+        pythoncom.PumpMessages()
+
     def _listening(self):
-        from select import select
         while True:
             select([self.dev], [], [])
             for event in self.dev.read():
