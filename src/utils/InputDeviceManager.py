@@ -28,18 +28,29 @@ event2:mouse
 event4:touch pad
 
 """
-KEY_CTRL = 29
-KEY_ALT = 56
-KET_SHIFT = 42
-KEY_SPACE = 57
-control_keys = [KEY_ALT, KEY_CTRL, KET_SHIFT, KEY_SPACE]
+try:
+    if NBUtils.getPlatform() == NBUtils.PLATFROM_LINUX:
+        KEY_CTRL = 29
+        KEY_ALT = 56
+        KET_SHIFT = 42
+        KEY_SPACE = 57
+        control_keys = [KEY_ALT, KEY_CTRL, KET_SHIFT, KEY_SPACE]
 
-KEY_F = 33
+        KEY_F = 33
+
+    if NBUtils.getPlatform() == NBUtils.PLATFROM_WINDOWS:
+        KEY_ALT = 32
+        KEY_F = 70
+except:
+    pass
 
 
 class InputDeviceManager(QObject):
     _INSTANCE = None
-    sin = Signal(InputEvent)
+    if NBUtils.getPlatform() == NBUtils.PLATFROM_WINDOWS:
+        sin = Signal(pyHook.KeyboardEvent)
+    else:
+        sin = Signal(InputEvent)
 
     @staticmethod
     def getInstance():
@@ -54,8 +65,9 @@ class InputDeviceManager(QObject):
         self.first_key = -1
         self.sin.connect(self._onKeyEvent)
         if NBUtils.getPlatform() == NBUtils.PLATFROM_WINDOWS:
+
             self.hm = pyHook.HookManager()
-            self.hm.KeyDown = self._onKeyEvent
+            self.hm.KeyDown = self.overrideKeyDown
             self.hm.mouse_hook = self._onMouseEvent
             self.hm.HookKeyboard()
             self.hm.HookMouse()
@@ -69,6 +81,10 @@ class InputDeviceManager(QObject):
             work = threading.Thread(target=self._listening)
             work.setDaemon(True)
             work.start()
+
+    def overrideKeyDown(self, event):
+        self.sin.emit(event)
+        return True
 
     def _listening_w(self):
         pythoncom.PumpMessages()
@@ -89,7 +105,11 @@ class InputDeviceManager(QObject):
         该方法应该放到主线程中执行
         """
         if NBUtils.getPlatform() == NBUtils.PLATFROM_WINDOWS:
-            print str(event.KeyID)
+            for key_map in self.SHOETCUT_MAPS:
+                if key_map[0] == KEY_ALT and event.Alt == KEY_ALT and event.KeyID == key_map[1]:
+                    runnable = self.SHOETCUT_MAPS[key_map]
+                    runnable()
+
         else:
             if self.first_key_down and event.value == 1:
                 for key_map in self.SHOETCUT_MAPS:
