@@ -56,7 +56,7 @@ QLabel#value_label {
 
 }
 
-QLabel#detail_head {
+QLineEdit#detail_head {
     font-weight: bold;
     font-size: 24px;
     font-family: Tahoma;

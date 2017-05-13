@@ -28,7 +28,8 @@ class DetailPanel(QWidget):
         self.head_bar = QFrame()
         self.head_bar.setLayout(QHBoxLayout())
         self.head_bar.layout().setAlignment(Qt.AlignLeft)
-        self.head_name = QLabel()
+        self.head_name = QLineEdit()
+        self.head_name.setReadOnly(True)
         self.head_name.setObjectName('detail_head')
         self.head_name.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)
 
