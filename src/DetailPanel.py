@@ -138,8 +138,13 @@ class DetailPanel(QWidget):
             split = item.split('.')
             if len(split) > 1 and not cn_to_en:
                 first = split[0] + '.'
-                second = split[1]
-                explains[first] = second
+                if explains.has_key(first) and isinstance(explains[first], list):
+                    explains[first].append(split[1])
+                else:
+                    second = []
+                    second.append(split[1])
+                    explains[first] = second
+
             elif not cn_to_en:
                 explains[u'解释:'] = item
             elif cn_to_en:
