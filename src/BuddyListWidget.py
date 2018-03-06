@@ -22,10 +22,19 @@ class BuddyListWidget(QListWidget):
         self.clear()
         if isinstance(explains, dict):
             for key in explains:
-                m_item = BuddyListWidget.BuddyListItem(key, explains[key])
-                item = QListWidgetItem()
-                self.addItem(item)
-                self.setItemWidget(item, m_item)
+                if isinstance(explains[key], list):
+                    for value in explains[key]:
+                        m_item = BuddyListWidget.BuddyListItem(key, value)
+                        item = QListWidgetItem()
+                        self.addItem(item)
+                        self.setItemWidget(item, m_item)
+                else:
+                    value = explains[key]
+                    m_item = BuddyListWidget.BuddyListItem(key, value)
+                    item = QListWidgetItem()
+                    self.addItem(item)
+                    self.setItemWidget(item, m_item)
+
         elif isinstance(explains, list):
             for i in range(len(explains)):
                 m_item = BuddyListWidget.BuddyListItem(str(i + 1) + '.', explains[i])
