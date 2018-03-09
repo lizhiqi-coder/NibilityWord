@@ -61,7 +61,11 @@ class DetailPanel(QWidget):
         self.other_bar = QFrame()
         pass
 
+    # 网络释义
     def _initWebBar(self):
+        self.btn_web = QPushButton()
+        self.btn_web.setIcon(QIcon(R.png.down))
+        self.btn_web.setObjectName('btn_web')
         self.web_bar = QFrame()
 
     def _initAdvBar(self):
@@ -85,24 +89,9 @@ class DetailPanel(QWidget):
         self.layout().addWidget(self.phone_bar)
 
         self.root_layout.addWidget(self.meaning_list_bar)
+        self.root_layout.addWidget(self.btn_web)
+        self.root_layout.addWidget(self.web_bar)
         # self.root_layout.addWidget(self.other_bar)
-
-    # def display(self, result):
-    #     self.head_name.setText(result.word_name)
-    #     for symbol in result.symbols:
-    #         self.ph_item.show(title=u'英', ph_symbol=symbol.ph['ph_en'][0],
-    #                           sound=symbol.ph['ph_en'][1])
-    #         self.ph_item2.show(title=u'美', ph_symbol=symbol.ph['ph_am'][0],
-    #                            sound=symbol.ph['ph_am'][1])
-    #
-    #         meaning_dict = {}
-    #         for key in symbol.part_means:
-    #             meaning = ''
-    #             for i in symbol.part_means[key]:
-    #                 meaning += (i + ';')
-    #             meaning_dict[key] = meaning
-    #
-    #         self.meaning_list_bar.setData(meaning_dict)
 
     def display(self, result):
         self.clear()
@@ -152,11 +141,16 @@ class DetailPanel(QWidget):
 
         self.meaning_list_bar.setData(explains)
 
+        if result.web != None:
+            self.btn_web.show()
+
     def clear(self):
         self.head_name.setText('')
         self.ph_item.hide()
         self.ph_item2.hide()
         self.meaning_list_bar.setData({})
+        self.btn_web.hide()
+        self.web_bar.hide()
 
 
 # -------------------------------------------------------------------#
