@@ -13,6 +13,7 @@ from BuddyListWidget import BuddyListWidget
 from res import R
 from utils import NBUtils
 from utils.MediaUtils import MediaLoader
+from WebListPanel import WebListPanel
 
 
 class DetailPanel(QWidget):
@@ -66,7 +67,14 @@ class DetailPanel(QWidget):
         self.btn_web = QPushButton()
         self.btn_web.setIcon(QIcon(R.png.down))
         self.btn_web.setObjectName('btn_web')
-        self.web_bar = QFrame()
+        self.web_bar = WebListPanel()
+        self.btn_web.clicked.connect(self._onShowWeb)
+
+    def _onShowWeb(self):
+        if self.web_bar.isHidden():
+            self.web_bar.show()
+        else:
+            self.web_bar.hide()
 
     def _initAdvBar(self):
         self.adv_var = QFrame()
@@ -143,6 +151,7 @@ class DetailPanel(QWidget):
 
         if result.web != None:
             self.btn_web.show()
+            self.web_bar.setData(result.web)
 
     def clear(self):
         self.head_name.setText('')
