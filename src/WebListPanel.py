@@ -7,10 +7,42 @@ except ImportError:
     from PyQt4.QtGui import *
     from PyQt4.QtCore import Qt
 
+from res import R
 
-class WebListPanel(QListWidget):
+
+class WebListPannel(QWidget):
     def __init__(self):
-        super(WebListPanel, self).__init__()
+        super(WebListPannel, self).__init__()
+        self._initUI()
+
+    def _initUI(self):
+        self.root_layout = QVBoxLayout()
+        self.setLayout(self.root_layout)
+        self.btn_web = QPushButton()
+        self.btn_web.setIcon(QIcon(R.png.down))
+        self.btn_web.setObjectName('btn_web')
+        self.web_widget = WebListWidget()
+        self.btn_web.clicked.connect(self._onShowWeb)
+        self.root_layout.addWidget(self.btn_web)
+        self.root_layout.addWidget(self.web_widget)
+        self.btn_web.hide()
+        self.web_widget.hide()
+
+    def _onShowWeb(self):
+        if self.web_widget.isHidden():
+            self.web_widget.show()
+        else:
+            self.web_widget.hide()
+
+    def display(self, web):
+        self.btn_web.show()
+        self.web_widget.hide()
+        self.web_widget.setData(web)
+
+
+class WebListWidget(QListWidget):
+    def __init__(self):
+        super(WebListWidget, self).__init__()
         self._initUI()
 
     def _initUI(self):
@@ -23,14 +55,14 @@ class WebListPanel(QListWidget):
             for key in web:
                 value_list = web[key]
                 value = ','.join(value_list)
-                item_widget = WebListPanel.WebListItem(key, value)
+                item_widget = WebListWidget.WebListItem(key, value)
                 item = QListWidgetItem()
                 self.addItem(item)
                 self.setItemWidget(item, item_widget)
 
     class WebListItem(QWidget):
         def __init__(self, key=None, value=None):
-            super(WebListPanel.WebListItem, self).__init__()
+            super(WebListWidget.WebListItem, self).__init__()
             self._key = key
             self._value = value
             self._initUI()
