@@ -1,7 +1,8 @@
 # coding:utf-8
 
-import httplib2
 import json
+
+import httplib2
 
 from src.model.DetailModel import DictResult
 
@@ -37,8 +38,9 @@ def translate(question, type='json'):
             result = _parseJson(json_data)
             return result
         else:
-            return json_data['errorCode']
+            print 'result error code is:', json_data['errorCode']
 
+        return None
     except Exception, e:
         print 'youdao exception', e
 
