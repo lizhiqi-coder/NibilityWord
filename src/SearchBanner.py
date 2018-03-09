@@ -227,6 +227,8 @@ class SearchBanner(QWidget):
                 self.web_pannel.show()
                 self.web_pannel.display(result.web)
 
+        self.adjustSize()
+
     # def closeEvent(self, event):
     #     reply = QMessageBox.question(self, 'tip',
     #                                  'are you sure to quit?',
@@ -271,7 +273,6 @@ class SearchBanner(QWidget):
             fast_entrys = self.local_dict.getFastEntry(self.text_edit.text())
             self.index_list_panel.display(fast_entrys)
             self.index_list_panel.show()
-
 
         else:
             self.index_list_panel.hide()

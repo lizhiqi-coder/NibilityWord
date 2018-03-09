@@ -1,0 +1,18 @@
+QPushButton#btn_web {
+    margin-top: 10px;
+    background-color: red;
+}
+
+QLabel#web_lable_key {
+    border: 0px;
+    background-color: transparent;
+    font-size: 24px;
+    color: green;
+}
+
+QLabel#web_lable_value {
+    border: 0px;
+    background-color: transparent;
+    font-size: 18px;
+    color: gray;
+}

@@ -8,6 +8,7 @@ except ImportError:
     from PyQt4.QtCore import Qt
 
 from res import R
+from utils import NBUtils
 
 
 class WebListPannel(QWidget):
@@ -16,6 +17,7 @@ class WebListPannel(QWidget):
         self._initUI()
 
     def _initUI(self):
+        NBUtils.bindStyleSheet(self, R.qss.web_panel_style)
         self.root_layout = QVBoxLayout()
         self.setLayout(self.root_layout)
         self.btn_web = QPushButton()
@@ -75,5 +77,7 @@ class WebListWidget(QListWidget):
             vlayout = QVBoxLayout()
             self.setLayout(vlayout)
             self.layout().setContentsMargins(0, 0, 0, 0)
+            self.layout().setAlignment(Qt.AlignLeft)
+            self.layout().setSpacing(10)
             self.layout().addWidget(label_key)
             self.layout().addWidget(label_value)

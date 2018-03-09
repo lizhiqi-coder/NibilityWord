@@ -16,11 +16,6 @@ QPushButton#btn_search {
     width: 35px;
 }
 
-QPushButton#btn_web {
-    margin-top: 10px;
-    background-color: darkgray;
-}
-
 QLineEdit {
     background-color: transparent;
     border: 0px solid;
