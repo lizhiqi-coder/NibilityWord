@@ -12,10 +12,10 @@ from interface import IYoudao
 from DetailPanel import DetailPanel
 from IndexListPanel import IndexListPanel
 from res import R
-from utils import NBUtils
 from src.interface.lingoes.Lingoes import Lingoes
 from src.SettingPage import SettingPage
 from utils.InputDeviceManager import *
+from WebListPanel import WebListPanel
 
 
 class TitleBar(QWidget):
@@ -111,6 +111,7 @@ class SearchBanner(QWidget):
         self.__initDetailPanel()
         self.__initListPanel()
         self._initShortcut()
+        self._initWebBar()
 
     def __initTransform(self):
         self.setGeometry(0, 0, 350, 60)
@@ -215,11 +216,17 @@ class SearchBanner(QWidget):
             self.index_list_panel.hide()
         except Exception, e:
             print 'onSearch except', e
+
+            self.detail_panel.hide()
+            self.btn_web.hide()
+            self.web_pannel.hide()
+
         if result != None:
             self.detail_panel.show()
             self.detail_panel.display(result=result)
-        else:
-            self.detail_panel.hide()
+            if result.web != None:
+                self.btn_web.show()
+                self.web_pannel.setData(result.web)
 
     # def closeEvent(self, event):
     #     reply = QMessageBox.question(self, 'tip',
@@ -234,6 +241,24 @@ class SearchBanner(QWidget):
         self.detail_panel = DetailPanel(self.width(), 200)
         self.detail_panel.hide()
         self.root_layout.addWidget(self.detail_panel)
+
+    # 网络释义
+    def _initWebBar(self):
+        self.btn_web = QPushButton()
+        self.btn_web.setIcon(QIcon(R.png.down))
+        self.btn_web.setObjectName('btn_web')
+        self.web_pannel = WebListPanel()
+        self.btn_web.clicked.connect(self._onShowWeb)
+        self.root_layout.addWidget(self.btn_web)
+        self.root_layout.addWidget(self.web_pannel)
+        self.btn_web.hide()
+        self.web_pannel.hide()
+
+    def _onShowWeb(self):
+        if self.web_pannel.isHidden():
+            self.web_pannel.show()
+        else:
+            self.web_pannel.hide()
 
     def __initListPanel(self):
         self.index_list_panel = IndexListPanel(self.width() - 30, 200)

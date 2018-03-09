@@ -13,7 +13,6 @@ from BuddyListWidget import BuddyListWidget
 from res import R
 from utils import NBUtils
 from utils.MediaUtils import MediaLoader
-from WebListPanel import WebListPanel
 
 
 class DetailPanel(QWidget):
@@ -62,20 +61,6 @@ class DetailPanel(QWidget):
         self.other_bar = QFrame()
         pass
 
-    # 网络释义
-    def _initWebBar(self):
-        self.btn_web = QPushButton()
-        self.btn_web.setIcon(QIcon(R.png.down))
-        self.btn_web.setObjectName('btn_web')
-        self.web_bar = WebListPanel()
-        self.btn_web.clicked.connect(self._onShowWeb)
-
-    def _onShowWeb(self):
-        if self.web_bar.isHidden():
-            self.web_bar.show()
-        else:
-            self.web_bar.hide()
-
     def _initAdvBar(self):
         self.adv_var = QFrame()
 
@@ -84,7 +69,6 @@ class DetailPanel(QWidget):
         self._initHead()
         self.__initPhoneBar()
         self._initMeaningListBar()
-        self._initWebBar()
         self._initAdvBar()
         self.__initOtherBar()
 
@@ -97,8 +81,6 @@ class DetailPanel(QWidget):
         self.layout().addWidget(self.phone_bar)
 
         self.root_layout.addWidget(self.meaning_list_bar)
-        self.root_layout.addWidget(self.btn_web)
-        self.root_layout.addWidget(self.web_bar)
         # self.root_layout.addWidget(self.other_bar)
 
     def display(self, result):
@@ -149,17 +131,11 @@ class DetailPanel(QWidget):
 
         self.meaning_list_bar.setData(explains)
 
-        if result.web != None:
-            self.btn_web.show()
-            self.web_bar.setData(result.web)
-
     def clear(self):
         self.head_name.setText('')
         self.ph_item.hide()
         self.ph_item2.hide()
         self.meaning_list_bar.setData({})
-        self.btn_web.hide()
-        self.web_bar.hide()
 
 
 # -------------------------------------------------------------------#
