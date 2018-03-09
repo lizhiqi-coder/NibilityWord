@@ -224,7 +224,7 @@ class SearchBanner(QWidget):
             self.detail_panel.show()
             self.detail_panel.display(result=result)
             if result.web != None:
-                self.detail_panel.show()
+                self.web_pannel.show()
                 self.web_pannel.display(result.web)
 
     # def closeEvent(self, event):
