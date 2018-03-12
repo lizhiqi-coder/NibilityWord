@@ -19,13 +19,17 @@ class WebListPannel(QWidget):
     def _initUI(self):
         NBUtils.bindStyleSheet(self, R.qss.web_panel_style)
         self.root_layout = QVBoxLayout()
+        self.root_layout.setContentsMargins(0, 0, 0, 0)
+        self.root_layout.setSpacing(0)
         self.setLayout(self.root_layout)
+
         self.btn_web = QPushButton()
         self.btn_web.setIcon(QIcon(R.png.down))
         self.btn_web.setObjectName('btn_web')
         self.web_widget = WebListWidget()
         self.web_widget.setObjectName('web_list_widget')
         self.btn_web.clicked.connect(self._onShowWeb)
+
         self.root_layout.addWidget(self.btn_web)
         self.root_layout.addWidget(self.web_widget)
         self.btn_web.hide()
@@ -80,6 +84,6 @@ class WebListWidget(QListWidget):
             self.setLayout(vlayout)
             self.layout().setContentsMargins(0, 0, 0, 0)
             self.layout().setAlignment(Qt.AlignLeft)
-            self.layout().setSpacing(10)
+            self.layout().setSpacing(0)
             self.layout().addWidget(label_key)
             self.layout().addWidget(label_value)

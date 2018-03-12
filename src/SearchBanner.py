@@ -277,8 +277,8 @@ class SearchBanner(QWidget):
         else:
             self.index_list_panel.hide()
             self.btn_clear.hide()
-            self.adjustSize()
 
+        self.adjustSize()
         self.web_pannel.hide()
 
     def _initShortcut(self):

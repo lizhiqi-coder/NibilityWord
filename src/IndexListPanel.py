@@ -23,7 +23,7 @@ class IndexListPanel(QWidget):
 
     def initTransfrom(self, w, h):
         self.setGeometry(0, 0, w, h)
-        self.setFixedSize(w, h)
+        self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Minimum)
 
     def _initUI(self):
         NBUtils.bindStyleSheet(self, R.qss.global_style)
