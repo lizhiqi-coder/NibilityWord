@@ -1,6 +1,8 @@
 QPushButton#btn_web {
+    border: 1px solid floralwhite;
+    border-radius: 2px;
+    background-color: whitesmoke;
     margin-top: 10px;
-    background-color: red;
 }
 
 QLabel#web_lable_key {
@@ -17,7 +19,11 @@ QLabel#web_lable_value {
     color: gray;
 }
 
-#web_list_widget::Item {
+QListWidget {
+    border: 0px;
+}
+
+QListWidget#web_list_widget::Item {
     width: auto;
     height: 50px;
 }

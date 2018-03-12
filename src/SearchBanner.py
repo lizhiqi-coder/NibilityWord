@@ -217,13 +217,13 @@ class SearchBanner(QWidget):
         except Exception, e:
             print 'onSearch except', e
 
-            self.detail_panel.hide()
-            self.web_pannel.hide()
+        self.detail_panel.hide()
+        self.web_pannel.hide()
 
         if result != None:
             self.detail_panel.show()
             self.detail_panel.display(result=result)
-            if result.web != None:
+            if result.web != None and len(result.web) > 0:
                 self.web_pannel.show()
                 self.web_pannel.display(result.web)
 
