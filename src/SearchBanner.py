@@ -114,7 +114,7 @@ class SearchBanner(QWidget):
         self._initWebPannel()
 
     def __initTransform(self):
-        self.setGeometry(0, 0, 350, 60)
+        self.setGeometry(0, 0, 350, 40)
         self.setFixedWidth(self.width())
         self.setMaximumHeight(self.height())
         self.moveByCenter(350, -300)
@@ -129,6 +129,7 @@ class SearchBanner(QWidget):
 
     def __initTitle(self):
         self.title_bar = TitleBar(self)
+        self.title_bar.setFixedWidth(self.width())
         self.layout().addWidget(self.title_bar)
         self.title_bar.setTitleIcon(R.png.app_icon)
         self.title_bar.setTitleText(R.string.app_name_cn)
