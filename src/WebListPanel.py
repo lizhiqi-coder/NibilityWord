@@ -54,6 +54,7 @@ class WebListWidget(QListWidget):
 
     # web is dict
     def setData(self, web):
+        self.clear()
         if isinstance(web, dict):
             for key in web:
                 value_list = web[key]

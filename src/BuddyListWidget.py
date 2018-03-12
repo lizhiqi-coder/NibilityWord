@@ -16,7 +16,7 @@ class BuddyListWidget(QListWidget):
     def _initUI(self):
         self.setFocusPolicy(Qt.NoFocus)
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        pass
+        self.setResizeMode(QListView.Adjust)
 
     def setData(self, explains):
         self.clear()

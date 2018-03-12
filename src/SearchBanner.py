@@ -279,6 +279,8 @@ class SearchBanner(QWidget):
             self.btn_clear.hide()
             self.adjustSize()
 
+        self.web_pannel.hide()
+
     def _initShortcut(self):
 
         # show_win_action = QAction(self)
