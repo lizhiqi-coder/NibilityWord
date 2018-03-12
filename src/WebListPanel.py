@@ -24,6 +24,7 @@ class WebListPannel(QWidget):
         self.btn_web.setIcon(QIcon(R.png.down))
         self.btn_web.setObjectName('btn_web')
         self.web_widget = WebListWidget()
+        self.web_widget.setObjectName('web_list_widget')
         self.btn_web.clicked.connect(self._onShowWeb)
         self.root_layout.addWidget(self.btn_web)
         self.root_layout.addWidget(self.web_widget)

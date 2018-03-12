@@ -16,3 +16,8 @@ QLabel#web_lable_value {
     font-size: 18px;
     color: gray;
 }
+
+#web_list_widget::Item {
+    width: auto;
+    height: 50px;
+}
