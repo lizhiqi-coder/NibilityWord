@@ -38,7 +38,7 @@ QFrame#index_list_frame {
 }
 
 QFrame#detail_list_frame {
-    padding: 10px;
+    margin: 10px;
 }
 
 /*label*/

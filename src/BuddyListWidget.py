@@ -51,7 +51,8 @@ class BuddyListWidget(QListWidget):
             item = self.item(i)
             list_height += self.itemWidget(item).height()
 
-        self.resize(self.width(), list_height)
+        margins = self.getContentsMargins()
+        self.resize(self.width(), list_height + margins[1] + margins[3])
 
     def resizeEvent(self, *args, **kwargs):
         self.adjustHeight()

@@ -123,6 +123,7 @@ class SearchBanner(QWidget):
 
         self.root_layout = QVBoxLayout()
         self.root_layout.setAlignment(Qt.AlignTop)
+        self.root_layout.setSizeConstraint(QLayout.SetFixedSize)
         self.setLayout(self.root_layout)
         self.layout().setContentsMargins(10, 0, 10, 10)
 
