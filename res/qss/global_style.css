@@ -23,6 +23,7 @@ QLineEdit {
 
 /*frame*/
 QFrame {
+    border: 0px;
     background-color: transparent;
 }
 
@@ -32,8 +33,12 @@ QFrame#input_frame {
     background-color: whitesmoke;
 }
 
-QFrame#air_frame {
-    border: 0px;
+QFrame#index_list_frame {
+    /*border: 1px solid red;*/
+}
+
+QFrame#detail_list_frame {
+    padding: 10px;
 }
 
 /*label*/

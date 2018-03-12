@@ -33,7 +33,7 @@ class IndexListPanel(QWidget):
         self.layout().setSpacing(0)
 
         self.index_list_widget = BuddyListWidget()
-        self.index_list_widget.setObjectName('air_frame')
+        self.index_list_widget.setObjectName('index_list_frame')
         self.layout().addWidget(self.index_list_widget)
 
     def display(self, dict_result_list):

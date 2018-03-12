@@ -48,14 +48,9 @@ class DetailPanel(QWidget):
         self.phone_bar.layout().addWidget(self.ph_item)
         self.phone_bar.layout().addWidget(self.ph_item2)
 
-        pass
-
     def _initMeaningListBar(self):
         self.meaning_list_bar = BuddyListWidget()
-        self.meaning_list_bar.setObjectName('air_frame')
-        self.meaning_list_bar.setViewportMargins(10, 10, 10, 0)
-
-        pass
+        self.meaning_list_bar.setObjectName('detail_list_frame')
 
     def __initOtherBar(self):
         self.other_bar = QFrame()
