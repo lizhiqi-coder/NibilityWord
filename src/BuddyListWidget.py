@@ -41,6 +41,8 @@ class BuddyListWidget(QListWidget):
                 self.addItem(item)
                 self.setItemWidget(item, m_item)
 
+        self.resize(self.width(), self.adjustHeight())
+
     def adjustHeight(self):
         count = self.count()
         list_height = 0
