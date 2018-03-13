@@ -76,8 +76,9 @@ class WebListWidget(QListWidget):
             self._initUI()
 
         def _initUI(self):
-            label_key = QLabel(self._key)
-            label_key.setObjectName('web_lable_key')
+            line_edit_key = QLineEdit(self._key)
+            line_edit_key.setReadOnly(True)
+            line_edit_key.setObjectName('web_edit_key')
             label_value = QLabel(self._value)
             label_value.setObjectName('web_lable_value')
             vlayout = QVBoxLayout()
@@ -85,5 +86,5 @@ class WebListWidget(QListWidget):
             self.layout().setContentsMargins(0, 0, 0, 0)
             self.layout().setAlignment(Qt.AlignLeft)
             self.layout().setSpacing(0)
-            self.layout().addWidget(label_key)
+            self.layout().addWidget(line_edit_key)
             self.layout().addWidget(label_value)

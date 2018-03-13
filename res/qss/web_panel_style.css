@@ -5,7 +5,7 @@ QPushButton#btn_web {
     margin-top: 10px;
 }
 
-QLabel#web_lable_key {
+QLineEdit#web_edit_key {
     border: 0px;
     background-color: transparent;
     font-size: 20px;
