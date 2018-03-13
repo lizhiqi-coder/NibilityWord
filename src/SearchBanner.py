@@ -252,7 +252,7 @@ class SearchBanner(QWidget):
         self.root_layout.addWidget(self.web_pannel)
 
     def __initListPanel(self):
-        self.index_list_panel = IndexListPanel(self.width() - 30, 200)
+        self.index_list_panel = IndexListPanel()
         self.index_list_panel.hide()
         self.root_layout.addWidget(self.index_list_panel)
         self.index_list_panel.index_list_widget.itemSelectionChanged.connect(self.onListPanelSelectChanged)

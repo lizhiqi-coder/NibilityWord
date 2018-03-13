@@ -16,14 +16,10 @@ from utils import NBUtils
 class IndexListPanel(QWidget):
     """实时模糊搜索列表:本地快速查找"""
 
-    def __init__(self, w, h):
+    def __init__(self):
         super(IndexListPanel, self).__init__()
-        self.initTransfrom(w, h)
-        self._initUI()
-
-    def initTransfrom(self, w, h):
-        self.setGeometry(0, 0, w, h)
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self._initUI()
 
     def _initUI(self):
         NBUtils.bindStyleSheet(self, R.qss.global_style)
@@ -55,8 +51,6 @@ class IndexListPanel(QWidget):
     def clear(self):
         self.dict_result_list = []
         self.index_list_widget.setData({})
-
-        pass
 
 
 if __name__ == '__main__':
