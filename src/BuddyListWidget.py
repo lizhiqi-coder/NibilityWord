@@ -2,10 +2,10 @@
 
 try:
     from PySide.QtGui import *
-    from PySide.QtCore import Qt
+    from PySide.QtCore import Qt, QSize
 except ImportError:
     from PyQt4.QtGui import *
-    from PyQt4.QtCore import Qt
+    from PyQt4.QtCore import Qt, Qsize
 
 
 class BuddyListWidget(QListWidget):
@@ -52,10 +52,12 @@ class BuddyListWidget(QListWidget):
             list_height += self.itemWidget(item).height()
 
         margins = self.getContentsMargins()
-        self.resize(self.width(), list_height + margins[1] + margins[3])
+        size = QSize(self.width(), list_height + margins[1] + margins[3])
+        self.resize(size)
+        return size
 
-    def resizeEvent(self, *args, **kwargs):
-        self.adjustHeight()
+    def sizeHint(self, *args, **kwargs):
+        return self.adjustSize()
 
     class BuddyListItem(QWidget):
         def __init__(self, key=None, value=None):
