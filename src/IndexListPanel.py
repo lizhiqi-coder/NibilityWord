@@ -18,7 +18,6 @@ class IndexListPanel(QWidget):
 
     def __init__(self):
         super(IndexListPanel, self).__init__()
-        self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Minimum)
         self._initUI()
 
     def _initUI(self):
