@@ -241,7 +241,7 @@ class SearchBanner(QWidget):
     #         event.ignore()
 
     def __initDetailPanel(self):
-        self.detail_panel = DetailPanel(self.width(), 200)
+        self.detail_panel = DetailPanel()
         self.detail_panel.hide()
         self.root_layout.addWidget(self.detail_panel)
 

@@ -16,13 +16,9 @@ from utils.MediaUtils import MediaLoader
 
 
 class DetailPanel(QWidget):
-    def __init__(self, w, h):
+    def __init__(self):
         super(DetailPanel, self).__init__()
-        self.initTransfrom(w, h)
         self.__initUI()
-
-    def initTransfrom(self, w, h):
-        self.setGeometry(200, 200, w, h)
 
     def _initHead(self):
         self.head_bar = QFrame()
