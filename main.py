@@ -1,6 +1,8 @@
 # coding:utf-8
 
 import sys
+import os
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 try:
     from PySide.QtCore import *
