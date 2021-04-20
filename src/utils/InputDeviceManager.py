@@ -77,10 +77,11 @@ class InputDeviceManager(QObject):
 
         else:
             # linux 平台
-            self.dev = InputDevice('/dev/input/event0')
-            work = threading.Thread(target=self._listening)
-            work.setDaemon(True)
-            work.start()
+            print("this is linux platform")
+            # self.dev = InputDevice('/dev/input/event0')
+            # work = threading.Thread(target=self._listening)
+            # work.setDaemon(True)
+            # work.start()
 
     def overrideKeyDown(self, event):
         self.sin.emit(event)

@@ -12,6 +12,8 @@ import re
 import struct
 import xml.etree.ElementTree as ET
 import zlib
+import wget
+import urllib
 from io import BytesIO
 
 from Bean import *
@@ -387,10 +389,17 @@ class Lingoes():
     DICT_SPLIT = '='
     INDEX_LEVEL = 3
 
+    DICT_DOWNLOAD_URL_PREFIX = 'http://www.lingoes.cn/download/dict/ld2/'
+
     def __init__(self, dict_file_name):
         self.dict_file_name = dict_file_name
         # find file path
         raw_file_path = os.path.join(NBUtils.getRootDir(), 'data/localDicts/', self.dict_file_name)
+        if not os.path.exists(raw_file_path):
+            uri = os.path.join(self.DICT_DOWNLOAD_URL_PREFIX,urllib.quote(dict_file_name))
+            print("default dict file download uri: ",uri)
+            wget.download(uri, raw_file_path)
+
         self.cooked_file_path = LingoesDictReader(raw_file_path).getCookedFile()
         if self.cooked_file_path == None:
             return
