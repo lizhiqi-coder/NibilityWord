@@ -2,8 +2,8 @@
 Encoding=UTF-8
 Name=NiubilityWord
 Comment= create by lizhiqi
-Exec=python2.7 /home/lizhiqi/workspace/NiubilityWord/main.py
-Icon=/home/lizhiqi/workspace/NiubilityWord/res/app_icon.png
+#Exec=python2.7 /home/lizhiqi/workspace/NiubilityWord/main.py
+#Icon=/home/lizhiqi/workspace/NiubilityWord/res/app_icon.png
 Terminal=false
 StartupNotify=true
 Type=Application
